@@ -1,7 +1,7 @@
 {
   "id": "./consulta.html",
-  "name": "Control Escolar - Ernesto Romero Lucero",
-  "short_name": "Control Escolar",
+  "name": "Asistencia Escolar - Ernesto Romero Lucero",
+  "short_name": "Asistencia Escolar",
   "description": "Consulta de entradas y salidas de alumnos de la Secundaria Ernesto Romero Lucero",
   "start_url": "./consulta.html",
   "scope": "./",
