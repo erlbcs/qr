@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -87,10 +86,7 @@ input:focus {
   border-color: #2563eb;
 }
 
-#curp {
-  text-transform: uppercase;
-}
-
+#curp,
 #codigo {
   text-transform: uppercase;
 }
@@ -261,17 +257,27 @@ th {
   padding: 18px;
 }
 
-.btnNuevaConsulta {
+.btnNuevaConsulta,
+.btnCerrarSesion {
   width: 100%;
   margin-top: 10px;
   padding: 13px;
-  border: 2px solid #173b65;
   border-radius: 10px;
-  background: white;
-  color: #173b65;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.btnNuevaConsulta {
+  border: 2px solid #173b65;
+  background: white;
+  color: #173b65;
+}
+
+.btnCerrarSesion {
+  border: none;
+  background: #991b1b;
+  color: white;
 }
 
 .aviso {
@@ -280,6 +286,16 @@ th {
   line-height: 1.4;
   text-align: center;
   color: #6b7280;
+}
+
+.sesionInfo {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #eff6ff;
+  border-radius: 9px;
+  text-align: center;
+  color: #1e40af;
+  font-size: 13px;
 }
 
 </style>
@@ -325,7 +341,7 @@ th {
 
       <input
         id="codigo"
-        type="text"
+        type="password"
         maxlength="10"
         autocomplete="off"
         placeholder="Ingrese el código">
@@ -346,14 +362,21 @@ th {
       <div id="error"></div>
 
       <div class="aviso">
-        La información mostrada corresponde exclusivamente
-        al alumno asociado con la CURP y código proporcionados.
+        Si el acceso es correcto, este dispositivo
+        recordará al alumno para futuras consultas.
       </div>
 
     </div>
 
 
     <div id="resultado">
+
+      <div
+        id="sesionInfo"
+        class="sesionInfo">
+        Acceso guardado en este dispositivo.
+      </div>
+
 
       <div class="card">
 
@@ -441,9 +464,18 @@ th {
 
       <button
         class="btnNuevaConsulta"
-        onclick="nuevaConsulta()">
+        onclick="actualizarConsulta()">
 
-        REALIZAR OTRA CONSULTA
+        ACTUALIZAR REGISTROS
+
+      </button>
+
+
+      <button
+        class="btnCerrarSesion"
+        onclick="cerrarSesion()">
+
+        CERRAR SESIÓN / CAMBIAR ALUMNO
 
       </button>
 
@@ -458,8 +490,7 @@ th {
 
 /*
 =================================================
-PEGA AQUÍ LA MISMA URL /exec
-DE TU APLICACIÓN DE GOOGLE APPS SCRIPT
+PEGA AQUÍ TU URL /exec ACTUAL DE APPS SCRIPT
 =================================================
 */
 
@@ -467,11 +498,86 @@ const URL_API =
   'https://script.google.com/macros/s/AKfycbxeeSfxFcOKTFAbm8HMa8fGm_xpCAafd_HDfChpsBkiDoQbNMwG80ZjT0u1Ck1J4R1O/exec';
 
 
+/*
+=================================================
+NOMBRES USADOS EN LOCALSTORAGE
+=================================================
+*/
+
+const CLAVE_CURP =
+  'control_escolar_curp';
+
+const CLAVE_CODIGO =
+  'control_escolar_codigo';
+
+
 let consultando =
   false;
 
 
-function consultar() {
+/*
+=================================================
+AL CARGAR LA PÁGINA
+INTENTAR RECUPERAR SESIÓN
+=================================================
+*/
+
+window.addEventListener(
+  'load',
+  function() {
+
+    const curpGuardada =
+      localStorage.getItem(
+        CLAVE_CURP
+      );
+
+
+    const codigoGuardado =
+      localStorage.getItem(
+        CLAVE_CODIGO
+      );
+
+
+    if (
+      curpGuardada &&
+      codigoGuardado
+    ) {
+
+      document
+        .getElementById(
+          'curp'
+        )
+        .value =
+        curpGuardada;
+
+
+      document
+        .getElementById(
+          'codigo'
+        )
+        .value =
+        codigoGuardado;
+
+
+      consultar(
+        true
+      );
+
+    }
+
+  }
+);
+
+
+/*
+=================================================
+CONSULTAR
+=================================================
+*/
+
+function consultar(
+  consultaAutomatica = false
+) {
 
   if (consultando) {
     return;
@@ -481,7 +587,9 @@ function consultar() {
   const curp =
     limpiarTexto(
       document
-        .getElementById('curp')
+        .getElementById(
+          'curp'
+        )
         .value
     );
 
@@ -489,7 +597,9 @@ function consultar() {
   const codigo =
     limpiarTexto(
       document
-        .getElementById('codigo')
+        .getElementById(
+          'codigo'
+        )
         .value
     );
 
@@ -499,21 +609,31 @@ function consultar() {
 
   if (!curp) {
 
-    mostrarError(
-      'Ingresa la CURP del alumno.'
-    );
+    if (!consultaAutomatica) {
+
+      mostrarError(
+        'Ingresa la CURP del alumno.'
+      );
+
+    }
 
     return;
+
   }
 
 
   if (!codigo) {
 
-    mostrarError(
-      'Ingresa el código.'
-    );
+    if (!consultaAutomatica) {
+
+      mostrarError(
+        'Ingresa el código.'
+      );
+
+    }
 
     return;
+
   }
 
 
@@ -528,6 +648,7 @@ function consultar() {
     );
 
     return;
+
   }
 
 
@@ -557,15 +678,23 @@ function consultar() {
 
   enviarConsulta(
     curp,
-    codigo
+    codigo,
+    consultaAutomatica
   );
 
 }
 
 
+/*
+=================================================
+ENVÍA CONSULTA A APPS SCRIPT
+=================================================
+*/
+
 function enviarConsulta(
   curp,
-  codigo
+  codigo,
+  consultaAutomatica
 ) {
 
   const callback =
@@ -635,7 +764,10 @@ function enviarConsulta(
 
 
       procesarConsulta(
-        resultado
+        resultado,
+        curp,
+        codigo,
+        consultaAutomatica
       );
 
     };
@@ -707,14 +839,40 @@ function enviarConsulta(
 }
 
 
+/*
+=================================================
+PROCESAR RESULTADO
+=================================================
+*/
+
 function procesarConsulta(
-  resultado
+  resultado,
+  curp,
+  codigo,
+  consultaAutomatica
 ) {
 
   if (
     !resultado ||
     !resultado.ok
   ) {
+
+    /*
+    Si la sesión guardada ya no es válida,
+    eliminarla automáticamente.
+    */
+
+    if (
+      consultaAutomatica
+    ) {
+
+      borrarSesion();
+
+    }
+
+
+    mostrarFormulario();
+
 
     mostrarError(
       resultado &&
@@ -723,9 +881,29 @@ function procesarConsulta(
         : 'No fue posible realizar la consulta.'
     );
 
+
     return;
 
   }
+
+
+  /*
+  ===============================================
+  GUARDAR SESIÓN SOLO DESPUÉS
+  DE UNA AUTENTICACIÓN CORRECTA
+  ===============================================
+  */
+
+  localStorage.setItem(
+    CLAVE_CURP,
+    curp
+  );
+
+
+  localStorage.setItem(
+    CLAVE_CODIGO,
+    codigo
+  );
 
 
   const alumno =
@@ -816,6 +994,136 @@ function procesarConsulta(
   );
 
 
+  mostrarResultado();
+
+}
+
+
+/*
+=================================================
+ACTUALIZAR SIN CERRAR SESIÓN
+=================================================
+*/
+
+function actualizarConsulta() {
+
+  const curp =
+    localStorage.getItem(
+      CLAVE_CURP
+    );
+
+
+  const codigo =
+    localStorage.getItem(
+      CLAVE_CODIGO
+    );
+
+
+  if (
+    !curp ||
+    !codigo
+  ) {
+
+    cerrarSesion();
+
+    return;
+
+  }
+
+
+  document
+    .getElementById(
+      'curp'
+    )
+    .value =
+    curp;
+
+
+  document
+    .getElementById(
+      'codigo'
+    )
+    .value =
+    codigo;
+
+
+  consultar(
+    true
+  );
+
+}
+
+
+/*
+=================================================
+CERRAR SESIÓN
+=================================================
+*/
+
+function cerrarSesion() {
+
+  borrarSesion();
+
+
+  document
+    .getElementById(
+      'curp'
+    )
+    .value =
+    '';
+
+
+  document
+    .getElementById(
+      'codigo'
+    )
+    .value =
+    '';
+
+
+  ocultarError();
+
+
+  mostrarFormulario();
+
+
+  document
+    .getElementById(
+      'curp'
+    )
+    .focus();
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+
+}
+
+
+function borrarSesion() {
+
+  localStorage.removeItem(
+    CLAVE_CURP
+  );
+
+
+  localStorage.removeItem(
+    CLAVE_CODIGO
+  );
+
+}
+
+
+/*
+=================================================
+MOSTRAR PANTALLAS
+=================================================
+*/
+
+function mostrarResultado() {
+
   document
     .getElementById(
       'formulario'
@@ -841,6 +1149,34 @@ function procesarConsulta(
 
 }
 
+
+function mostrarFormulario() {
+
+  document
+    .getElementById(
+      'resultado'
+    )
+    .style
+    .display =
+    'none';
+
+
+  document
+    .getElementById(
+      'formulario'
+    )
+    .style
+    .display =
+    'block';
+
+}
+
+
+/*
+=================================================
+ESTADO ACTUAL
+=================================================
+*/
 
 function mostrarEstado(
   estado
@@ -931,6 +1267,12 @@ function mostrarEstado(
 }
 
 
+/*
+=================================================
+HISTORIAL
+=================================================
+*/
+
 function mostrarHistorial(
   registros
 ) {
@@ -1019,13 +1361,10 @@ function mostrarHistorial(
             )}
           </td>
 
-          <td
-            class="${clase}">
-
+          <td class="${clase}">
             ${escapar(
               movimiento
             )}
-
           </td>
 
         </tr>
@@ -1051,59 +1390,11 @@ function mostrarHistorial(
 }
 
 
-function nuevaConsulta() {
-
-  document
-    .getElementById(
-      'resultado'
-    )
-    .style
-    .display =
-    'none';
-
-
-  document
-    .getElementById(
-      'formulario'
-    )
-    .style
-    .display =
-    'block';
-
-
-  document
-    .getElementById(
-      'curp'
-    )
-    .value =
-    '';
-
-
-  document
-    .getElementById(
-      'codigo'
-    )
-    .value =
-    '';
-
-
-  ocultarError();
-
-
-  document
-    .getElementById(
-      'curp'
-    )
-    .focus();
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-
-}
-
+/*
+=================================================
+ERRORES
+=================================================
+*/
 
 function mostrarError(
   mensaje
@@ -1138,6 +1429,12 @@ function ocultarError() {
 
 }
 
+
+/*
+=================================================
+UTILIDADES
+=================================================
+*/
 
 function limpiarTexto(
   valor
@@ -1179,7 +1476,9 @@ function escapar(
 
 
 /*
-Permitir ENTER en los campos.
+=================================================
+ENTER EN LOS CAMPOS
+=================================================
 */
 
 document
