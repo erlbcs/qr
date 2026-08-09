@@ -1,0 +1,2543 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,
+           initial-scale=1,
+           maximum-scale=1,
+           user-scalable=no">
+
+<title>Panel Administrativo - Asistencia Escolar</title>
+
+<meta name="theme-color" content="#173b65">
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f3f6f9;
+  color: #1f2937;
+}
+
+.app {
+  max-width: 1250px;
+  margin: auto;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.header {
+  background: #173b65;
+  color: white;
+  padding: 18px 20px;
+}
+
+.headerFila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.headerTexto {
+  min-width: 0;
+}
+
+.escuela {
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.25;
+}
+
+.titulo {
+  margin-top: 4px;
+  font-size: 14px;
+  opacity: .92;
+}
+
+.usuarioHeader {
+  display: none;
+  text-align: right;
+  font-size: 13px;
+}
+
+.usuarioHeader strong {
+  display: block;
+  font-size: 15px;
+}
+
+.contenido {
+  padding: 18px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.06);
+}
+
+.oculto {
+  display: none !important;
+}
+
+/* LOGIN */
+
+.loginContenedor {
+  max-width: 440px;
+  margin: 50px auto;
+}
+
+.loginTitulo {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 12px 13px;
+  border: 2px solid #d1d5db;
+  border-radius: 9px;
+  font-size: 15px;
+  background: white;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: #2563eb;
+}
+
+.campoLogin {
+  margin-bottom: 15px;
+}
+
+.btnPrincipal,
+.btnSecundario,
+.btnPeligro {
+  border: none;
+  border-radius: 9px;
+  padding: 12px 15px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btnPrincipal {
+  width: 100%;
+  background: #173b65;
+  color: white;
+}
+
+.btnSecundario {
+  background: white;
+  color: #173b65;
+  border: 2px solid #173b65;
+}
+
+.btnPeligro {
+  background: #991b1b;
+  color: white;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: default;
+}
+
+.error {
+  display: none;
+  margin-top: 14px;
+  padding: 13px;
+  background: #fee2e2;
+  border: 2px solid #ef4444;
+  color: #991b1b;
+  border-radius: 9px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.procesando {
+  display: none;
+  margin-top: 12px;
+  text-align: center;
+  font-weight: bold;
+  color: #173b65;
+}
+
+/* PANEL */
+
+.barraSuperior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.fechaPanel {
+  font-weight: bold;
+  color: #4b5563;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tarjeta {
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.tarjetaNumero {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.tarjetaTexto {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #4b5563;
+  font-weight: bold;
+}
+
+.tarjetaDentro {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.tarjetaEntrada {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.tarjetaSalida {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.tarjetaSin {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.filtros {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr .8fr 2fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.grupoCampo {
+  min-width: 0;
+}
+
+.btnAplicar {
+  min-height: 43px;
+}
+
+.resumenFiltro {
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* TABLA */
+
+.tablaContenedor {
+  overflow-x: auto;
+  max-height: 560px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #173b65;
+  color: white;
+  padding: 11px 9px;
+  font-size: 12px;
+  text-align: left;
+}
+
+tbody td {
+  padding: 10px 9px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+.estadoDentro {
+  color: #166534;
+  font-weight: bold;
+}
+
+.estadoSalida {
+  color: #1e40af;
+  font-weight: bold;
+}
+
+.estadoSin {
+  color: #6b7280;
+  font-weight: bold;
+}
+
+.btnVer {
+  border: none;
+  background: #173b65;
+  color: white;
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.sinDatos {
+  padding: 25px;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* MODAL */
+
+.modalFondo {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgba(15, 23, 42, .60);
+  padding: 18px;
+  overflow-y: auto;
+}
+
+.modal {
+  max-width: 720px;
+  margin: 25px auto;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.modalHeader {
+  background: #173b65;
+  color: white;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.modalTitulo {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.btnCerrarModal {
+  border: none;
+  background: rgba(255,255,255,.16);
+  color: white;
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modalContenido {
+  padding: 18px;
+}
+
+.alumnoNombre {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.alumnoDatos {
+  margin-top: 6px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.estadoModal {
+  margin-top: 14px;
+  padding: 13px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.hoyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.hoyItem {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.hoyTipo {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: bold;
+}
+
+.hoyHora {
+  margin-top: 5px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.historialTitulo {
+  margin-top: 18px;
+  margin-bottom: 9px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.historialLista {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+}
+
+.historialFila {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.historialFila:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 950px) {
+
+  .tarjetas {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  .filtros {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .busquedaCampo {
+    grid-column: 1 / -1;
+  }
+
+  .btnAplicar {
+    grid-column: 1 / -1;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .app {
+    max-width: none;
+  }
+
+  .contenido {
+    padding: 12px;
+  }
+
+  .headerFila {
+    align-items: flex-start;
+  }
+
+  .escuela {
+    font-size: 16px;
+  }
+
+  .tarjetas {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tarjetaNumero {
+    font-size: 24px;
+  }
+
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+
+  .busquedaCampo,
+  .btnAplicar {
+    grid-column: auto;
+  }
+
+  .acciones {
+    width: 100%;
+  }
+
+  .acciones button {
+    flex: 1;
+  }
+
+  .hoyGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+
+    <div class="headerFila">
+
+      <div class="headerTexto">
+
+        <div class="escuela">
+          SECUNDARIA ERNESTO ROMERO LUCERO
+        </div>
+
+        <div class="titulo">
+          ASISTENCIA ESCOLAR · PANEL ADMINISTRATIVO
+        </div>
+
+      </div>
+
+      <div
+        id="usuarioHeader"
+        class="usuarioHeader">
+
+        <strong id="usuarioNombreHeader"></strong>
+
+        <span id="usuarioCuentaHeader"></span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="contenido">
+
+
+    <!-- LOGIN -->
+
+    <div
+      id="pantallaLogin"
+      class="loginContenedor">
+
+      <div class="card">
+
+        <div class="loginTitulo">
+          ACCESO ADMINISTRATIVO
+        </div>
+
+
+        <div class="campoLogin">
+
+          <label for="usuario">
+            USUARIO
+          </label>
+
+          <input
+            id="usuario"
+            type="text"
+            autocomplete="username"
+            placeholder="Ingrese su usuario">
+
+        </div>
+
+
+        <div class="campoLogin">
+
+          <label for="contrasena">
+            CONTRASEÑA
+          </label>
+
+          <input
+            id="contrasena"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Ingrese su contraseña">
+
+        </div>
+
+
+        <button
+          id="btnIngresar"
+          class="btnPrincipal"
+          onclick="iniciarSesion()">
+
+          INGRESAR
+
+        </button>
+
+
+        <div
+          id="procesandoLogin"
+          class="procesando">
+
+          Validando acceso...
+
+        </div>
+
+
+        <div
+          id="errorLogin"
+          class="error">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- PANEL -->
+
+    <div
+      id="pantallaPanel"
+      class="oculto">
+
+
+      <div class="barraSuperior">
+
+        <div
+          id="fechaPanel"
+          class="fechaPanel">
+        </div>
+
+
+        <div class="acciones">
+
+          <button
+            class="btnSecundario"
+            onclick="cargarResumen()">
+
+            ACTUALIZAR
+
+          </button>
+
+
+          <button
+            class="btnPeligro"
+            onclick="cerrarSesion()">
+
+            CERRAR SESIÓN
+
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- TARJETAS -->
+
+      <div class="tarjetas">
+
+        <div class="tarjeta">
+
+          <div
+            id="cardTotal"
+            class="tarjetaNumero">
+            0
+          </div>
+
+          <div class="tarjetaTexto">
+            ALUMNOS
+          </div>
+
+        </div>
+
+
+        <div class="tarjeta tarjetaEntrada">
+
+          <div
+            id="cardEntradas"
+            class="tarjetaNumero">
+            0
+          </div>
+
+          <div class="tarjetaTexto">
+            ENTRADAS HOY
+          </div>
+
+        </div>
+
+
+        <div class="tarjeta tarjetaSalida">
+
+          <div
+            id="cardSalidas"
+            class="tarjetaNumero">
+            0
+          </div>
+
+          <div class="tarjetaTexto">
+            SALIDAS HOY
+          </div>
+
+        </div>
+
+
+        <div class="tarjeta tarjetaDentro">
+
+          <div
+            id="cardDentro"
+            class="tarjetaNumero">
+            0
+          </div>
+
+          <div class="tarjetaTexto">
+            DENTRO DE LA ESCUELA
+          </div>
+
+        </div>
+
+
+        <div class="tarjeta tarjetaSin">
+
+          <div
+            id="cardSinRegistro"
+            class="tarjetaNumero">
+            0
+          </div>
+
+          <div class="tarjetaTexto">
+            SIN REGISTRO HOY
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- FILTROS -->
+
+      <div class="card">
+
+        <div class="filtros">
+
+          <div class="grupoCampo">
+
+            <label for="filtroTurno">
+              TURNO
+            </label>
+
+            <select id="filtroTurno">
+
+              <option value="">
+                TODOS
+              </option>
+
+              <option value="MATUTINO">
+                MATUTINO
+              </option>
+
+              <option value="VESPERTINO">
+                VESPERTINO
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="grupoCampo">
+
+            <label for="filtroGrado">
+              GRADO
+            </label>
+
+            <select id="filtroGrado">
+
+              <option value="">
+                TODOS
+              </option>
+
+              <option value="1">
+                1
+              </option>
+
+              <option value="2">
+                2
+              </option>
+
+              <option value="3">
+                3
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="grupoCampo">
+
+            <label for="filtroGrupo">
+              GRUPO
+            </label>
+
+            <select id="filtroGrupo">
+
+              <option value="">
+                TODOS
+              </option>
+
+              <option>A</option>
+              <option>B</option>
+              <option>C</option>
+              <option>D</option>
+              <option>E</option>
+              <option>F</option>
+              <option>G</option>
+              <option>H</option>
+              <option>I</option>
+              <option>J</option>
+
+            </select>
+
+          </div>
+
+
+          <div class="grupoCampo busquedaCampo">
+
+            <label for="busqueda">
+              BUSCAR NOMBRE O CURP
+            </label>
+
+            <input
+              id="busqueda"
+              type="text"
+              placeholder="Escriba nombre o CURP">
+
+          </div>
+
+
+          <button
+            class="btnPrincipal btnAplicar"
+            onclick="cargarResumen()">
+
+            APLICAR
+
+          </button>
+
+        </div>
+
+
+        <div
+          id="resumenFiltro"
+          class="resumenFiltro">
+        </div>
+
+      </div>
+
+
+      <!-- TABLA -->
+
+      <div class="card">
+
+        <div class="tablaContenedor">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>ALUMNO</th>
+                <th>GRADO</th>
+                <th>GRUPO</th>
+                <th>TURNO</th>
+                <th>ENTRADA</th>
+                <th>SALIDA</th>
+                <th>ESTADO</th>
+                <th>HISTORIAL</th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="tablaAlumnos">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <div
+        id="procesandoPanel"
+        class="procesando">
+
+        Actualizando información...
+
+      </div>
+
+
+      <div
+        id="errorPanel"
+        class="error">
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MODAL HISTORIAL -->
+
+<div
+  id="modalFondo"
+  class="modalFondo"
+  onclick="cerrarModalDesdeFondo(event)">
+
+  <div class="modal">
+
+    <div class="modalHeader">
+
+      <div class="modalTitulo">
+        HISTORIAL DEL ALUMNO
+      </div>
+
+      <button
+        class="btnCerrarModal"
+        onclick="cerrarModal()">
+
+        CERRAR
+
+      </button>
+
+    </div>
+
+
+    <div class="modalContenido">
+
+      <div
+        id="modalNombre"
+        class="alumnoNombre">
+      </div>
+
+      <div
+        id="modalDatos"
+        class="alumnoDatos">
+      </div>
+
+      <div
+        id="modalEstado"
+        class="estadoModal">
+      </div>
+
+
+      <div class="hoyGrid">
+
+        <div class="hoyItem">
+
+          <div class="hoyTipo">
+            ENTRADA HOY
+          </div>
+
+          <div
+            id="modalEntrada"
+            class="hoyHora">
+            --
+          </div>
+
+        </div>
+
+
+        <div class="hoyItem">
+
+          <div class="hoyTipo">
+            SALIDA HOY
+          </div>
+
+          <div
+            id="modalSalida"
+            class="hoyHora">
+            --
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="historialTitulo">
+        HISTORIAL RECIENTE
+      </div>
+
+
+      <div
+        id="modalHistorial"
+        class="historialLista">
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/*
+=================================================
+API APPS SCRIPT
+=================================================
+*/
+
+const URL_API =
+  'https://script.google.com/macros/s/AKfycbxeeSfxFcOKTFAbm8HMa8fGm_xpCAafd_HDfChpsBkiDoQbNMwG80ZjT0u1Ck1J4R1O/exec';
+
+
+const CLAVE_TOKEN =
+  'asistencia_admin_token';
+
+
+let tokenAdmin =
+  '';
+
+let solicitudEnCurso =
+  false;
+
+
+/*
+=================================================
+INICIO
+=================================================
+*/
+
+window.addEventListener(
+  'load',
+  function() {
+
+    tokenAdmin =
+      sessionStorage.getItem(
+        CLAVE_TOKEN
+      ) || '';
+
+
+    if (tokenAdmin) {
+
+      mostrarPanel();
+
+      cargarResumen();
+
+    }
+
+    else {
+
+      mostrarLogin();
+
+    }
+
+  }
+);
+
+
+/*
+=================================================
+LOGIN
+=================================================
+*/
+
+async function iniciarSesion() {
+
+  if (solicitudEnCurso) {
+    return;
+  }
+
+
+  ocultarError(
+    'errorLogin'
+  );
+
+
+  const usuario =
+    String(
+      document
+        .getElementById(
+          'usuario'
+        )
+        .value || ''
+    )
+      .trim()
+      .toUpperCase();
+
+
+  const contrasena =
+    String(
+      document
+        .getElementById(
+          'contrasena'
+        )
+        .value || ''
+    );
+
+
+  if (!usuario) {
+
+    mostrarError(
+      'errorLogin',
+      'Ingresa el usuario.'
+    );
+
+    return;
+
+  }
+
+
+  if (!contrasena) {
+
+    mostrarError(
+      'errorLogin',
+      'Ingresa la contraseña.'
+    );
+
+    return;
+
+  }
+
+
+  solicitudEnCurso =
+    true;
+
+
+  document
+    .getElementById(
+      'btnIngresar'
+    )
+    .disabled =
+    true;
+
+
+  mostrarProcesando(
+    'procesandoLogin',
+    true
+  );
+
+
+  try {
+
+    const passwordHash =
+      await sha256(
+        contrasena
+      );
+
+
+    llamarApi(
+
+      {
+
+        accion:
+          'loginAdmin',
+
+        usuario:
+          usuario,
+
+        passwordHash:
+          passwordHash
+
+      },
+
+      function(resultado) {
+
+        solicitudEnCurso =
+          false;
+
+
+        document
+          .getElementById(
+            'btnIngresar'
+          )
+          .disabled =
+          false;
+
+
+        mostrarProcesando(
+          'procesandoLogin',
+          false
+        );
+
+
+        if (
+          !resultado ||
+          !resultado.ok
+        ) {
+
+          mostrarError(
+            'errorLogin',
+            resultado &&
+            resultado.mensaje
+              ? resultado.mensaje
+              : 'No fue posible iniciar sesión.'
+          );
+
+          return;
+
+        }
+
+
+        tokenAdmin =
+          resultado.token;
+
+
+        sessionStorage.setItem(
+          CLAVE_TOKEN,
+          tokenAdmin
+        );
+
+
+        document
+          .getElementById(
+            'contrasena'
+          )
+          .value =
+          '';
+
+
+        mostrarPanel();
+
+
+        cargarResumen();
+
+      }
+
+    );
+
+  }
+
+  catch (error) {
+
+    solicitudEnCurso =
+      false;
+
+
+    document
+      .getElementById(
+        'btnIngresar'
+      )
+      .disabled =
+      false;
+
+
+    mostrarProcesando(
+      'procesandoLogin',
+      false
+    );
+
+
+    mostrarError(
+      'errorLogin',
+      'No fue posible procesar la contraseña.'
+    );
+
+  }
+
+}
+
+
+/*
+=================================================
+RESUMEN ADMIN
+=================================================
+*/
+
+function cargarResumen() {
+
+  if (!tokenAdmin) {
+
+    cerrarSesionLocal();
+
+    return;
+
+  }
+
+
+  ocultarError(
+    'errorPanel'
+  );
+
+
+  mostrarProcesando(
+    'procesandoPanel',
+    true
+  );
+
+
+  const turno =
+    document
+      .getElementById(
+        'filtroTurno'
+      )
+      .value;
+
+
+  const grado =
+    document
+      .getElementById(
+        'filtroGrado'
+      )
+      .value;
+
+
+  const grupo =
+    document
+      .getElementById(
+        'filtroGrupo'
+      )
+      .value;
+
+
+  const busqueda =
+    String(
+      document
+        .getElementById(
+          'busqueda'
+        )
+        .value || ''
+    )
+      .trim()
+      .toUpperCase();
+
+
+  llamarApi(
+
+    {
+
+      accion:
+        'adminResumen',
+
+      token:
+        tokenAdmin,
+
+      turno:
+        turno,
+
+      grado:
+        grado,
+
+      grupo:
+        grupo,
+
+      busqueda:
+        busqueda
+
+    },
+
+    function(resultado) {
+
+      mostrarProcesando(
+        'procesandoPanel',
+        false
+      );
+
+
+      if (
+        !resultado ||
+        !resultado.ok
+      ) {
+
+        if (
+          resultado &&
+          resultado.tipo ===
+          'SESION'
+        ) {
+
+          cerrarSesionLocal();
+
+
+          mostrarError(
+            'errorLogin',
+            resultado.mensaje
+          );
+
+          return;
+
+        }
+
+
+        mostrarError(
+          'errorPanel',
+          resultado &&
+          resultado.mensaje
+            ? resultado.mensaje
+            : 'No fue posible obtener la información.'
+        );
+
+        return;
+
+      }
+
+
+      pintarPanel(
+        resultado
+      );
+
+    }
+
+  );
+
+}
+
+
+/*
+=================================================
+PINTAR PANEL
+=================================================
+*/
+
+function pintarPanel(
+  resultado
+) {
+
+  const resumen =
+    resultado.resumen || {};
+
+
+  document
+    .getElementById(
+      'cardTotal'
+    )
+    .textContent =
+    resumen.total ?? 0;
+
+
+  document
+    .getElementById(
+      'cardEntradas'
+    )
+    .textContent =
+    resumen.entradas ?? 0;
+
+
+  document
+    .getElementById(
+      'cardSalidas'
+    )
+    .textContent =
+    resumen.salidas ?? 0;
+
+
+  document
+    .getElementById(
+      'cardDentro'
+    )
+    .textContent =
+    resumen.dentro ?? 0;
+
+
+  document
+    .getElementById(
+      'cardSinRegistro'
+    )
+    .textContent =
+    resumen.sinRegistro ?? 0;
+
+
+  document
+    .getElementById(
+      'fechaPanel'
+    )
+    .textContent =
+    'Fecha: ' +
+    (
+      resultado.fecha || ''
+    );
+
+
+  if (
+    resultado.usuario
+  ) {
+
+    document
+      .getElementById(
+        'usuarioNombreHeader'
+      )
+      .textContent =
+      resultado.usuario.nombre || '';
+
+
+    document
+      .getElementById(
+        'usuarioCuentaHeader'
+      )
+      .textContent =
+      resultado.usuario.usuario || '';
+
+
+    document
+      .getElementById(
+        'usuarioHeader'
+      )
+      .style
+      .display =
+      'block';
+
+  }
+
+
+  const filtros =
+    resultado.filtros || {};
+
+
+  const partes =
+    [];
+
+
+  if (filtros.turno) {
+    partes.push(
+      'Turno: ' +
+      filtros.turno
+    );
+  }
+
+
+  if (filtros.grado) {
+    partes.push(
+      'Grado: ' +
+      filtros.grado
+    );
+  }
+
+
+  if (filtros.grupo) {
+    partes.push(
+      'Grupo: ' +
+      filtros.grupo
+    );
+  }
+
+
+  if (filtros.busqueda) {
+    partes.push(
+      'Búsqueda: ' +
+      filtros.busqueda
+    );
+  }
+
+
+  document
+    .getElementById(
+      'resumenFiltro'
+    )
+    .textContent =
+    (
+      partes.length
+        ? partes.join(' • ') +
+          ' • '
+        : ''
+    ) +
+    (resumen.total ?? 0) +
+    ' alumno(s)';
+
+
+  pintarTabla(
+    resultado.alumnos || []
+  );
+
+}
+
+
+/*
+=================================================
+TABLA
+=================================================
+*/
+
+function pintarTabla(
+  alumnos
+) {
+
+  const cuerpo =
+    document
+      .getElementById(
+        'tablaAlumnos'
+      );
+
+
+  if (
+    !alumnos ||
+    alumnos.length === 0
+  ) {
+
+    cuerpo.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="8"
+          class="sinDatos">
+
+          No existen alumnos para los filtros seleccionados.
+
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  let html =
+    '';
+
+
+  alumnos.forEach(
+    alumno => {
+
+      let claseEstado =
+        'estadoSin';
+
+
+      if (
+        alumno.estado ===
+        'DENTRO DE LA ESCUELA'
+      ) {
+
+        claseEstado =
+          'estadoDentro';
+
+      }
+
+
+      else if (
+        alumno.estado ===
+        'SALIDA REGISTRADA'
+      ) {
+
+        claseEstado =
+          'estadoSalida';
+
+      }
+
+
+      html += `
+
+        <tr>
+
+          <td>
+            ${escapar(
+              alumno.nombre
+            )}
+          </td>
+
+          <td>
+            ${escapar(
+              alumno.grado
+            )}
+          </td>
+
+          <td>
+            ${escapar(
+              alumno.grupo
+            )}
+          </td>
+
+          <td>
+            ${escapar(
+              alumno.turno
+            )}
+          </td>
+
+          <td>
+            ${
+              alumno.entrada
+                ? escapar(
+                    alumno.entrada
+                  )
+                : '--'
+            }
+          </td>
+
+          <td>
+            ${
+              alumno.salida
+                ? escapar(
+                    alumno.salida
+                  )
+                : '--'
+            }
+          </td>
+
+          <td
+            class="${claseEstado}">
+
+            ${escapar(
+              alumno.estado
+            )}
+
+          </td>
+
+          <td>
+
+            <button
+              class="btnVer"
+              onclick="verHistorial(
+                '${escaparJs(
+                  alumno.curp
+                )}'
+              )">
+
+              VER
+
+            </button>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }
+  );
+
+
+  cuerpo.innerHTML =
+    html;
+
+}
+
+
+/*
+=================================================
+HISTORIAL
+=================================================
+*/
+
+function verHistorial(
+  curp
+) {
+
+  if (!tokenAdmin) {
+    return;
+  }
+
+
+  llamarApi(
+
+    {
+
+      accion:
+        'adminHistorial',
+
+      token:
+        tokenAdmin,
+
+      curp:
+        curp
+
+    },
+
+    function(resultado) {
+
+      if (
+        !resultado ||
+        !resultado.ok
+      ) {
+
+        if (
+          resultado &&
+          resultado.tipo ===
+          'SESION'
+        ) {
+
+          cerrarSesionLocal();
+
+          return;
+
+        }
+
+
+        alert(
+          resultado &&
+          resultado.mensaje
+            ? resultado.mensaje
+            : 'No fue posible consultar el historial.'
+        );
+
+        return;
+
+      }
+
+
+      abrirModalHistorial(
+        resultado
+      );
+
+    }
+
+  );
+
+}
+
+
+function abrirModalHistorial(
+  resultado
+) {
+
+  const alumno =
+    resultado.alumno || {};
+
+
+  const nombre =
+    [
+      alumno.nombre,
+      alumno.primerApellido,
+      alumno.segundoApellido
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+
+  document
+    .getElementById(
+      'modalNombre'
+    )
+    .textContent =
+    nombre;
+
+
+  document
+    .getElementById(
+      'modalDatos'
+    )
+    .textContent =
+    String(
+      alumno.grado || ''
+    ) +
+    '° ' +
+    String(
+      alumno.grupo || ''
+    ) +
+    ' • ' +
+    String(
+      alumno.turno || ''
+    );
+
+
+  const estado =
+    String(
+      resultado.estadoActual ||
+      'SIN REGISTRO'
+    );
+
+
+  const estadoDiv =
+    document
+      .getElementById(
+        'modalEstado'
+      );
+
+
+  estadoDiv.textContent =
+    estado;
+
+
+  if (
+    estado ===
+    'DENTRO DE LA ESCUELA'
+  ) {
+
+    estadoDiv.style.background =
+      '#dcfce7';
+
+    estadoDiv.style.color =
+      '#166534';
+
+  }
+
+  else if (
+    estado ===
+    'SALIDA REGISTRADA'
+  ) {
+
+    estadoDiv.style.background =
+      '#dbeafe';
+
+    estadoDiv.style.color =
+      '#1e40af';
+
+  }
+
+  else {
+
+    estadoDiv.style.background =
+      '#f3f4f6';
+
+    estadoDiv.style.color =
+      '#374151';
+
+  }
+
+
+  document
+    .getElementById(
+      'modalEntrada'
+    )
+    .textContent =
+    resultado.hoy &&
+    resultado.hoy.entrada
+      ? resultado.hoy.entrada
+      : '--';
+
+
+  document
+    .getElementById(
+      'modalSalida'
+    )
+    .textContent =
+    resultado.hoy &&
+    resultado.hoy.salida
+      ? resultado.hoy.salida
+      : '--';
+
+
+  const historial =
+    resultado.historial || [];
+
+
+  const contenedor =
+    document
+      .getElementById(
+        'modalHistorial'
+      );
+
+
+  if (
+    historial.length === 0
+  ) {
+
+    contenedor.innerHTML = `
+
+      <div class="sinDatos">
+        No existen movimientos registrados.
+      </div>
+
+    `;
+
+  }
+
+  else {
+
+    let html =
+      '';
+
+
+    historial.forEach(
+      registro => {
+
+        html += `
+
+          <div class="historialFila">
+
+            <div>
+              ${escapar(
+                registro.fecha
+              )}
+            </div>
+
+            <div>
+              ${escapar(
+                registro.hora
+              )}
+            </div>
+
+            <div>
+              ${escapar(
+                registro.movimiento
+              )}
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+    contenedor.innerHTML =
+      html;
+
+  }
+
+
+  document
+    .getElementById(
+      'modalFondo'
+    )
+    .style
+    .display =
+    'block';
+
+}
+
+
+function cerrarModal() {
+
+  document
+    .getElementById(
+      'modalFondo'
+    )
+    .style
+    .display =
+    'none';
+
+}
+
+
+function cerrarModalDesdeFondo(
+  event
+) {
+
+  if (
+    event.target.id ===
+    'modalFondo'
+  ) {
+
+    cerrarModal();
+
+  }
+
+}
+
+
+/*
+=================================================
+CERRAR SESIÓN
+=================================================
+*/
+
+function cerrarSesion() {
+
+  const token =
+    tokenAdmin;
+
+
+  cerrarSesionLocal();
+
+
+  if (token) {
+
+    llamarApi(
+
+      {
+
+        accion:
+          'adminLogout',
+
+        token:
+          token
+
+      },
+
+      function() {}
+
+    );
+
+  }
+
+}
+
+
+function cerrarSesionLocal() {
+
+  tokenAdmin =
+    '';
+
+
+  sessionStorage.removeItem(
+    CLAVE_TOKEN
+  );
+
+
+  document
+    .getElementById(
+      'usuarioHeader'
+    )
+    .style
+    .display =
+    'none';
+
+
+  document
+    .getElementById(
+      'pantallaPanel'
+    )
+    .classList
+    .add(
+      'oculto'
+    );
+
+
+  document
+    .getElementById(
+      'pantallaLogin'
+    )
+    .classList
+    .remove(
+      'oculto'
+    );
+
+
+  document
+    .getElementById(
+      'contrasena'
+    )
+    .value =
+    '';
+
+
+  cerrarModal();
+
+}
+
+
+/*
+=================================================
+PANTALLAS
+=================================================
+*/
+
+function mostrarPanel() {
+
+  document
+    .getElementById(
+      'pantallaLogin'
+    )
+    .classList
+    .add(
+      'oculto'
+    );
+
+
+  document
+    .getElementById(
+      'pantallaPanel'
+    )
+    .classList
+    .remove(
+      'oculto'
+    );
+
+}
+
+
+function mostrarLogin() {
+
+  document
+    .getElementById(
+      'pantallaPanel'
+    )
+    .classList
+    .add(
+      'oculto'
+    );
+
+
+  document
+    .getElementById(
+      'pantallaLogin'
+    )
+    .classList
+    .remove(
+      'oculto'
+    );
+
+}
+
+
+/*
+=================================================
+JSONP
+=================================================
+*/
+
+function llamarApi(
+  parametros,
+  callbackResultado
+) {
+
+  const callback =
+    'respuestaAdmin_' +
+    Date.now() +
+    '_' +
+    Math.floor(
+      Math.random() * 100000
+    );
+
+
+  const script =
+    document.createElement(
+      'script'
+    );
+
+
+  let completado =
+    false;
+
+
+  const limpiar =
+    function() {
+
+      try {
+        delete window[
+          callback
+        ];
+      }
+      catch (e) {}
+
+
+      if (
+        script.parentNode
+      ) {
+
+        script.parentNode
+          .removeChild(
+            script
+          );
+
+      }
+
+    };
+
+
+  window[
+    callback
+  ] =
+    function(resultado) {
+
+      if (completado) {
+        return;
+      }
+
+
+      completado =
+        true;
+
+
+      limpiar();
+
+
+      callbackResultado(
+        resultado
+      );
+
+    };
+
+
+  script.onerror =
+    function() {
+
+      if (completado) {
+        return;
+      }
+
+
+      completado =
+        true;
+
+
+      limpiar();
+
+
+      callbackResultado({
+
+        ok:
+          false,
+
+        mensaje:
+          'No fue posible comunicarse con el sistema.'
+
+      });
+
+    };
+
+
+  parametros.callback =
+    callback;
+
+
+  script.src =
+    URL_API +
+    '?' +
+    new URLSearchParams(
+      parametros
+    )
+      .toString();
+
+
+  document.body
+    .appendChild(
+      script
+    );
+
+}
+
+
+/*
+=================================================
+SHA-256 EN EL NAVEGADOR
+=================================================
+*/
+
+async function sha256(
+  texto
+) {
+
+  const datos =
+    new TextEncoder()
+      .encode(
+        texto
+      );
+
+
+  const hashBuffer =
+    await crypto.subtle.digest(
+      'SHA-256',
+      datos
+    );
+
+
+  const hashArray =
+    Array.from(
+      new Uint8Array(
+        hashBuffer
+      )
+    );
+
+
+  return hashArray
+    .map(
+      byte =>
+        byte
+          .toString(16)
+          .padStart(
+            2,
+            '0'
+          )
+    )
+    .join('');
+
+}
+
+
+/*
+=================================================
+UTILIDADES
+=================================================
+*/
+
+function mostrarProcesando(
+  id,
+  mostrar
+) {
+
+  document
+    .getElementById(
+      id
+    )
+    .style
+    .display =
+    mostrar
+      ? 'block'
+      : 'none';
+
+}
+
+
+function mostrarError(
+  id,
+  mensaje
+) {
+
+  const div =
+    document
+      .getElementById(
+        id
+      );
+
+
+  div.textContent =
+    mensaje;
+
+
+  div.style.display =
+    'block';
+
+}
+
+
+function ocultarError(
+  id
+) {
+
+  document
+    .getElementById(
+      id
+    )
+    .style
+    .display =
+    'none';
+
+}
+
+
+function escapar(
+  valor
+) {
+
+  const div =
+    document.createElement(
+      'div'
+    );
+
+
+  div.textContent =
+    String(
+      valor ?? ''
+    );
+
+
+  return div.innerHTML;
+
+}
+
+
+function escaparJs(
+  valor
+) {
+
+  return String(
+    valor || ''
+  )
+    .replace(
+      /\\/g,
+      '\\\\'
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    );
+
+}
+
+
+/*
+=================================================
+ENTER EN LOGIN / BÚSQUEDA
+=================================================
+*/
+
+document
+  .getElementById(
+    'contrasena'
+  )
+  .addEventListener(
+    'keydown',
+    function(event) {
+
+      if (
+        event.key === 'Enter'
+      ) {
+
+        iniciarSesion();
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById(
+    'busqueda'
+  )
+  .addEventListener(
+    'keydown',
+    function(event) {
+
+      if (
+        event.key === 'Enter'
+      ) {
+
+        cargarResumen();
+
+      }
+
+    }
+  );
+
+</script>
+
+</body>
+
+</html>
