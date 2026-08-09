@@ -31,7 +31,7 @@
 <link
   rel="apple-touch-icon"
   href="./icon-192.png">
-  
+
 <style>
 
 * {
@@ -85,6 +85,35 @@ body {
 
 .oculto {
   display: none !important;
+}
+
+#contenedorInstalar {
+  display: none;
+  margin-bottom: 15px;
+}
+
+.btnInstalar {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #166534;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,.12);
+}
+
+.btnInstalar:active {
+  transform: scale(.99);
+}
+
+.instalarTexto {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .tabs {
@@ -465,9 +494,11 @@ input:focus {
 }
 
 @media (max-width: 380px) {
+
   .filtros {
     grid-template-columns: 1fr;
   }
+
 }
 
 </style>
@@ -492,6 +523,26 @@ input:focus {
 
 
   <div class="contenido">
+
+
+    <!-- INSTALAR PWA -->
+
+    <div id="contenedorInstalar">
+
+      <button
+        id="btnInstalar"
+        class="btnInstalar"
+        onclick="instalarAplicacion()">
+
+        📲 INSTALAR APLICACIÓN
+
+      </button>
+
+      <div class="instalarTexto">
+        Instala Control Escolar en la pantalla de inicio de tu celular.
+      </div>
+
+    </div>
 
 
     <!-- LOGIN -->
@@ -616,8 +667,10 @@ input:focus {
 
 
       <div class="aviso">
+
         El acceso quedará guardado en este dispositivo
         hasta que se cierre la sesión.
+
       </div>
 
     </div>
@@ -671,7 +724,7 @@ input:focus {
     </div>
 
 
-    <!-- DETALLE DEL ALUMNO -->
+    <!-- DETALLE ALUMNO -->
 
     <div
       id="pantallaAlumno"
@@ -900,7 +953,7 @@ input:focus {
 
 /*
 =================================================
-URL DE GOOGLE APPS SCRIPT
+URL APPS SCRIPT
 =================================================
 */
 
@@ -930,20 +983,13 @@ const CLAVE_CODIGO_ALUMNO =
   'control_escolar_codigo';
 
 
-let tipoAcceso =
-  'TUTOR';
+let historialCompleto = [];
 
-let historialCompleto =
-  [];
+let filtroActual = '7';
 
-let filtroActual =
-  '7';
+let curpAlumnoActual = '';
 
-let curpAlumnoActual =
-  '';
-
-let consultaEnCurso =
-  false;
+let consultaEnCurso = false;
 
 
 /*
@@ -957,6 +1003,7 @@ window.addEventListener(
   function() {
 
     recuperarSesion();
+    comprobarModoAplicacion();
 
   }
 );
@@ -964,60 +1011,42 @@ window.addEventListener(
 
 /*
 =================================================
-CAMBIAR TIPO DE ACCESO
+TIPO DE ACCESO
 =================================================
 */
 
-function cambiarTipoAcceso(
-  tipo
-) {
-
-  tipoAcceso =
-    tipo;
-
+function cambiarTipoAcceso(tipo) {
 
   ocultarError();
 
 
   document
-    .getElementById(
-      'tabTutor'
-    )
-    .classList
-    .toggle(
+    .getElementById('tabTutor')
+    .classList.toggle(
       'activo',
       tipo === 'TUTOR'
     );
 
 
   document
-    .getElementById(
-      'tabAlumno'
-    )
-    .classList
-    .toggle(
+    .getElementById('tabAlumno')
+    .classList.toggle(
       'activo',
       tipo === 'ALUMNO'
     );
 
 
   document
-    .getElementById(
-      'loginTutor'
-    )
-    .classList
-    .toggle(
+    .getElementById('loginTutor')
+    .classList.toggle(
       'oculto',
       tipo !== 'TUTOR'
     );
 
 
   document
-    .getElementById(
-      'loginAlumno'
-    )
-    .classList
-    .toggle(
+    .getElementById('loginAlumno')
+    .classList.toggle(
       'oculto',
       tipo !== 'ALUMNO'
     );
@@ -1114,7 +1143,7 @@ function recuperarSesion() {
 
 /*
 =================================================
-CONSULTAR TUTOR
+TUTOR
 =================================================
 */
 
@@ -1123,9 +1152,7 @@ function consultarTutor() {
   const idTutor =
     limpiarTexto(
       document
-        .getElementById(
-          'idTutor'
-        )
+        .getElementById('idTutor')
         .value
     );
 
@@ -1133,9 +1160,7 @@ function consultarTutor() {
   const codigo =
     limpiarTexto(
       document
-        .getElementById(
-          'codigoTutor'
-        )
+        .getElementById('codigoTutor')
         .value
     );
 
@@ -1224,7 +1249,9 @@ function cargarTutor(
         !resultado.ok
       ) {
 
-        if (automatico) {
+        if (
+          automatico
+        ) {
 
           borrarSesion();
 
@@ -1276,12 +1303,6 @@ function cargarTutor(
 }
 
 
-/*
-=================================================
-MOSTRAR HIJOS
-=================================================
-*/
-
 function mostrarHijosTutor(
   resultado
 ) {
@@ -1315,9 +1336,7 @@ function mostrarHijosTutor(
       <div class="card">
 
         <div class="sinRegistros">
-
           No existen alumnos asociados a este tutor.
-
         </div>
 
       </div>
@@ -1328,8 +1347,7 @@ function mostrarHijosTutor(
 
   else {
 
-    let html =
-      '';
+    let html = '';
 
 
     hijos.forEach(
@@ -1433,6 +1451,7 @@ function mostrarHijosTutor(
                 ENTRADA<br>
 
                 <strong>
+
                   ${
                     hijo.entradaHoy
                       ? escapar(
@@ -1440,6 +1459,7 @@ function mostrarHijosTutor(
                         )
                       : '--'
                   }
+
                 </strong>
 
               </div>
@@ -1450,6 +1470,7 @@ function mostrarHijosTutor(
                 SALIDA<br>
 
                 <strong>
+
                   ${
                     hijo.salidaHoy
                       ? escapar(
@@ -1457,6 +1478,7 @@ function mostrarHijosTutor(
                         )
                       : '--'
                   }
+
                 </strong>
 
               </div>
@@ -1486,7 +1508,7 @@ function mostrarHijosTutor(
 
 /*
 =================================================
-ABRIR HIJO
+HIJO DEL TUTOR
 =================================================
 */
 
@@ -1561,7 +1583,7 @@ function abrirHijo(
 
 /*
 =================================================
-CONSULTA INDIVIDUAL
+ACCESO INDIVIDUAL
 =================================================
 */
 
@@ -1646,7 +1668,9 @@ function cargarAlumnoIndividual(
         !resultado.ok
       ) {
 
-        if (automatico) {
+        if (
+          automatico
+        ) {
 
           borrarSesion();
 
@@ -1705,7 +1729,7 @@ function cargarAlumnoIndividual(
 
 /*
 =================================================
-DETALLE DEL ALUMNO
+DETALLE ALUMNO
 =================================================
 */
 
@@ -1720,13 +1744,9 @@ function mostrarDetalleAlumno(
 
   const nombre =
     [
-
       alumno.nombre,
-
       alumno.primerApellido,
-
       alumno.segundoApellido
-
     ]
       .filter(Boolean)
       .join(' ');
@@ -1773,8 +1793,7 @@ function mostrarDetalleAlumno(
     .getElementById(
       'btnVolverHijos'
     )
-    .classList
-    .toggle(
+    .classList.toggle(
       'oculto',
       !esTutor
     );
@@ -1840,7 +1859,7 @@ function mostrarDetalleAlumno(
 
 /*
 =================================================
-ACTUALIZAR
+ACTUALIZACIONES
 =================================================
 */
 
@@ -1964,8 +1983,7 @@ function seleccionarFiltro(
     .getElementById(
       mapa[filtro]
     )
-    .classList
-    .add(
+    .classList.add(
       'activo'
     );
 
@@ -2221,8 +2239,7 @@ function mostrarHistorialAgrupado(
   }
 
 
-  const dias =
-    {};
+  const dias = {};
 
 
   registros.forEach(
@@ -2297,8 +2314,7 @@ function mostrarHistorialAgrupado(
       );
 
 
-  let html =
-    '';
+  let html = '';
 
 
   fechas.forEach(
@@ -2415,7 +2431,7 @@ function actualizarResumen(
 
 /*
 =================================================
-ESTADO
+ESTADO ACTUAL
 =================================================
 */
 
@@ -2510,7 +2526,7 @@ function mostrarEstado(
 
 /*
 =================================================
-LLAMADA API JSONP
+API JSONP
 =================================================
 */
 
@@ -2638,8 +2654,7 @@ function mostrarPantalla(
     .getElementById(
       'pantallaLogin'
     )
-    .classList
-    .toggle(
+    .classList.toggle(
       'oculto',
       pantalla !== 'LOGIN'
     );
@@ -2649,8 +2664,7 @@ function mostrarPantalla(
     .getElementById(
       'pantallaHijos'
     )
-    .classList
-    .toggle(
+    .classList.toggle(
       'oculto',
       pantalla !== 'HIJOS'
     );
@@ -2660,8 +2674,7 @@ function mostrarPantalla(
     .getElementById(
       'pantallaAlumno'
     )
-    .classList
-    .toggle(
+    .classList.toggle(
       'oculto',
       pantalla !== 'ALUMNO'
     );
@@ -2712,12 +2725,10 @@ function cerrarSesion() {
   borrarSesion();
 
 
-  historialCompleto =
-    [];
+  historialCompleto = [];
 
 
-  curpAlumnoActual =
-    '';
+  curpAlumnoActual = '';
 
 
   document
@@ -3047,9 +3058,129 @@ document
     }
   );
 
+
 /*
 =================================================
-REGISTRAR SERVICE WORKER
+PWA - BOTÓN DE INSTALACIÓN
+=================================================
+*/
+
+let eventoInstalacion =
+  null;
+
+
+window.addEventListener(
+  'beforeinstallprompt',
+  function(evento) {
+
+    evento.preventDefault();
+
+
+    eventoInstalacion =
+      evento;
+
+
+    document
+      .getElementById(
+        'contenedorInstalar'
+      )
+      .style
+      .display =
+      'block';
+
+  }
+);
+
+
+async function instalarAplicacion() {
+
+  if (
+    !eventoInstalacion
+  ) {
+
+    return;
+
+  }
+
+
+  eventoInstalacion.prompt();
+
+
+  const resultado =
+    await eventoInstalacion
+      .userChoice;
+
+
+  if (
+    resultado.outcome ===
+    'accepted'
+  ) {
+
+    document
+      .getElementById(
+        'contenedorInstalar'
+      )
+      .style
+      .display =
+      'none';
+
+  }
+
+
+  eventoInstalacion =
+    null;
+
+}
+
+
+window.addEventListener(
+  'appinstalled',
+  function() {
+
+    eventoInstalacion =
+      null;
+
+
+    document
+      .getElementById(
+        'contenedorInstalar'
+      )
+      .style
+      .display =
+      'none';
+
+  }
+);
+
+
+function comprobarModoAplicacion() {
+
+  const instalada =
+    window.matchMedia(
+      '(display-mode: standalone)'
+    ).matches;
+
+
+  if (
+    instalada
+  ) {
+
+    document
+      .getElementById(
+        'contenedorInstalar'
+      )
+      .style
+      .display =
+      'none';
+
+  }
+
+}
+
+
+/*
+=================================================
+SERVICE WORKER
 =================================================
 */
 
@@ -3082,7 +3213,7 @@ if (
           function(error) {
 
             console.error(
-              'Error al registrar Service Worker:',
+              'Error Service Worker:',
               error
             );
 
@@ -3094,8 +3225,6 @@ if (
 
 }
 
-
-  
 </script>
 
 </body>
