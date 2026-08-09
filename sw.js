@@ -1,5 +1,5 @@
 const CACHE_NAME =
-  'control-escolar-v1';
+  'control-escolar-v2';
 
 
 const ARCHIVOS =
