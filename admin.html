@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
 <meta charset="UTF-8">
 
 <meta
@@ -13,7 +14,9 @@
 
 <title>Panel Administrativo - Asistencia Escolar</title>
 
-<meta name="theme-color" content="#173b65">
+<meta
+  name="theme-color"
+  content="#173b65">
 
 <style>
 
@@ -29,7 +32,7 @@ body {
 }
 
 .app {
-  max-width: 1250px;
+  max-width: 1280px;
   margin: auto;
   min-height: 100vh;
   background: #ffffff;
@@ -46,10 +49,6 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-}
-
-.headerTexto {
-  min-width: 0;
 }
 
 .escuela {
@@ -92,8 +91,6 @@ body {
   display: none !important;
 }
 
-/* LOGIN */
-
 .loginContenedor {
   max-width: 440px;
   margin: 50px auto;
@@ -135,17 +132,17 @@ select:focus {
 
 .btnPrincipal,
 .btnSecundario,
-.btnPeligro {
-  border: none;
+.btnPeligro,
+.btnPeriodo {
   border-radius: 9px;
-  padding: 12px 15px;
-  font-size: 15px;
+  padding: 11px 14px;
+  font-size: 14px;
   font-weight: bold;
   cursor: pointer;
 }
 
 .btnPrincipal {
-  width: 100%;
+  border: none;
   background: #173b65;
   color: white;
 }
@@ -157,13 +154,32 @@ select:focus {
 }
 
 .btnPeligro {
+  border: none;
   background: #991b1b;
+  color: white;
+}
+
+.btnPeriodo {
+  border: 2px solid #d1d5db;
+  background: white;
+  color: #374151;
+}
+
+.btnPeriodo.activo {
+  border-color: #173b65;
+  background: #173b65;
   color: white;
 }
 
 button:disabled {
   opacity: .6;
   cursor: default;
+}
+
+#btnIngresar {
+  width: 100%;
+  padding: 14px;
+  font-size: 17px;
 }
 
 .error {
@@ -186,8 +202,6 @@ button:disabled {
   color: #173b65;
 }
 
-/* PANEL */
-
 .barraSuperior {
   display: flex;
   justify-content: space-between;
@@ -208,16 +222,44 @@ button:disabled {
   flex-wrap: wrap;
 }
 
+/* PERIODO */
+
+.periodoRapido {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.fechasGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.periodoActual {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #1e40af;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* TARJETAS */
+
 .tarjetas {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0,1fr));
   gap: 12px;
   margin-bottom: 16px;
 }
 
 .tarjeta {
   border-radius: 12px;
-  padding: 16px;
+  padding: 16px 10px;
   text-align: center;
   border: 1px solid #e5e7eb;
   background: #f8fafc;
@@ -235,11 +277,6 @@ button:disabled {
   font-weight: bold;
 }
 
-.tarjetaDentro {
-  background: #dcfce7;
-  color: #166534;
-}
-
 .tarjetaEntrada {
   background: #f0fdf4;
   color: #166534;
@@ -250,14 +287,21 @@ button:disabled {
   color: #1e40af;
 }
 
-.tarjetaSin {
+.tarjetaEspecial {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.tarjetaGris {
   background: #f3f4f6;
   color: #374151;
 }
 
+/* FILTROS */
+
 .filtros {
   display: grid;
-  grid-template-columns: 1.2fr .8fr .8fr 2fr auto;
+  grid-template-columns: 1.1fr .7fr .7fr 2fr auto;
   gap: 10px;
   align-items: end;
 }
@@ -266,8 +310,8 @@ button:disabled {
   min-width: 0;
 }
 
-.btnAplicar {
-  min-height: 43px;
+.busquedaCampo input {
+  text-transform: uppercase;
 }
 
 .resumenFiltro {
@@ -280,7 +324,7 @@ button:disabled {
 
 .tablaContenedor {
   overflow-x: auto;
-  max-height: 560px;
+  max-height: 590px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
 }
@@ -288,7 +332,7 @@ button:disabled {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 980px;
 }
 
 thead th {
@@ -322,6 +366,11 @@ tbody tr:hover {
   font-weight: bold;
 }
 
+.estadoCon {
+  color: #7c3aed;
+  font-weight: bold;
+}
+
 .estadoSin {
   color: #6b7280;
   font-weight: bold;
@@ -351,13 +400,13 @@ tbody tr:hover {
   position: fixed;
   z-index: 1000;
   inset: 0;
-  background: rgba(15, 23, 42, .60);
+  background: rgba(15,23,42,.60);
   padding: 18px;
   overflow-y: auto;
 }
 
 .modal {
-  max-width: 720px;
+  max-width: 760px;
   margin: 25px auto;
   background: white;
   border-radius: 14px;
@@ -405,6 +454,14 @@ tbody tr:hover {
   color: #6b7280;
 }
 
+.modalPeriodo {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: #1e40af;
+  font-weight: bold;
+}
+
 .estadoModal {
   margin-top: 14px;
   padding: 13px;
@@ -447,7 +504,7 @@ tbody tr:hover {
 }
 
 .historialLista {
-  max-height: 320px;
+  max-height: 380px;
   overflow-y: auto;
   border: 1px solid #e5e7eb;
   border-radius: 9px;
@@ -466,7 +523,7 @@ tbody tr:hover {
   border-bottom: none;
 }
 
-@media (max-width: 950px) {
+@media (max-width: 1000px) {
 
   .tarjetas {
     grid-template-columns: repeat(2, minmax(0,1fr));
@@ -476,21 +533,14 @@ tbody tr:hover {
     grid-template-columns: 1fr 1fr;
   }
 
-  .busquedaCampo {
-    grid-column: 1 / -1;
-  }
-
-  .btnAplicar {
+  .busquedaCampo,
+  .btnFiltroAplicar {
     grid-column: 1 / -1;
   }
 
 }
 
-@media (max-width: 600px) {
-
-  .app {
-    max-width: none;
-  }
+@media (max-width: 650px) {
 
   .contenido {
     padding: 12px;
@@ -502,6 +552,10 @@ tbody tr:hover {
 
   .escuela {
     font-size: 16px;
+  }
+
+  .fechasGrid {
+    grid-template-columns: 1fr;
   }
 
   .tarjetas {
@@ -517,7 +571,7 @@ tbody tr:hover {
   }
 
   .busquedaCampo,
-  .btnAplicar {
+  .btnFiltroAplicar {
     grid-column: auto;
   }
 
@@ -529,13 +583,10 @@ tbody tr:hover {
     flex: 1;
   }
 
-  .hoyGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-
 }
 
 </style>
+
 </head>
 
 
@@ -543,11 +594,12 @@ tbody tr:hover {
 
 <div class="app">
 
+
   <div class="header">
 
     <div class="headerFila">
 
-      <div class="headerTexto">
+      <div>
 
         <div class="escuela">
           SECUNDARIA ERNESTO ROMERO LUCERO
@@ -558,6 +610,7 @@ tbody tr:hover {
         </div>
 
       </div>
+
 
       <div
         id="usuarioHeader"
@@ -688,6 +741,91 @@ tbody tr:hover {
       </div>
 
 
+      <!-- PERIODO -->
+
+      <div class="card">
+
+        <div class="periodoRapido">
+
+          <button
+            id="periodoHoy"
+            class="btnPeriodo activo"
+            onclick="seleccionarPeriodoRapido('HOY')">
+
+            HOY
+
+          </button>
+
+
+          <button
+            id="periodo7"
+            class="btnPeriodo"
+            onclick="seleccionarPeriodoRapido('7')">
+
+            ÚLTIMOS 7 DÍAS
+
+          </button>
+
+
+          <button
+            id="periodo30"
+            class="btnPeriodo"
+            onclick="seleccionarPeriodoRapido('30')">
+
+            ÚLTIMOS 30 DÍAS
+
+          </button>
+
+        </div>
+
+
+        <div class="fechasGrid">
+
+          <div>
+
+            <label for="fechaInicio">
+              FECHA INICIAL
+            </label>
+
+            <input
+              id="fechaInicio"
+              type="date">
+
+          </div>
+
+
+          <div>
+
+            <label for="fechaFin">
+              FECHA FINAL
+            </label>
+
+            <input
+              id="fechaFin"
+              type="date">
+
+          </div>
+
+
+          <button
+            class="btnPrincipal"
+            onclick="aplicarPeriodoPersonalizado()">
+
+            CONSULTAR PERIODO
+
+          </button>
+
+        </div>
+
+
+        <div
+          id="periodoActual"
+          class="periodoActual">
+        </div>
+
+      </div>
+
+
       <!-- TARJETAS -->
 
       <div class="tarjetas">
@@ -695,12 +833,14 @@ tbody tr:hover {
         <div class="tarjeta">
 
           <div
-            id="cardTotal"
+            id="card1Numero"
             class="tarjetaNumero">
             0
           </div>
 
-          <div class="tarjetaTexto">
+          <div
+            id="card1Texto"
+            class="tarjetaTexto">
             ALUMNOS
           </div>
 
@@ -710,13 +850,15 @@ tbody tr:hover {
         <div class="tarjeta tarjetaEntrada">
 
           <div
-            id="cardEntradas"
+            id="card2Numero"
             class="tarjetaNumero">
             0
           </div>
 
-          <div class="tarjetaTexto">
-            ENTRADAS HOY
+          <div
+            id="card2Texto"
+            class="tarjetaTexto">
+            ENTRADAS
           </div>
 
         </div>
@@ -725,43 +867,49 @@ tbody tr:hover {
         <div class="tarjeta tarjetaSalida">
 
           <div
-            id="cardSalidas"
+            id="card3Numero"
             class="tarjetaNumero">
             0
           </div>
 
-          <div class="tarjetaTexto">
-            SALIDAS HOY
+          <div
+            id="card3Texto"
+            class="tarjetaTexto">
+            SALIDAS
           </div>
 
         </div>
 
 
-        <div class="tarjeta tarjetaDentro">
+        <div class="tarjeta tarjetaEspecial">
 
           <div
-            id="cardDentro"
+            id="card4Numero"
             class="tarjetaNumero">
             0
           </div>
 
-          <div class="tarjetaTexto">
-            DENTRO DE LA ESCUELA
+          <div
+            id="card4Texto"
+            class="tarjetaTexto">
+            DENTRO
           </div>
 
         </div>
 
 
-        <div class="tarjeta tarjetaSin">
+        <div class="tarjeta tarjetaGris">
 
           <div
-            id="cardSinRegistro"
+            id="card5Numero"
             class="tarjetaNumero">
             0
           </div>
 
-          <div class="tarjetaTexto">
-            SIN REGISTRO HOY
+          <div
+            id="card5Texto"
+            class="tarjetaTexto">
+            SIN REGISTRO
           </div>
 
         </div>
@@ -812,17 +960,9 @@ tbody tr:hover {
                 TODOS
               </option>
 
-              <option value="1">
-                1
-              </option>
-
-              <option value="2">
-                2
-              </option>
-
-              <option value="3">
-                3
-              </option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
 
             </select>
 
@@ -872,10 +1012,10 @@ tbody tr:hover {
 
 
           <button
-            class="btnPrincipal btnAplicar"
+            class="btnPrincipal btnFiltroAplicar"
             onclick="cargarResumen()">
 
-            APLICAR
+            APLICAR FILTROS
 
           </button>
 
@@ -898,23 +1038,8 @@ tbody tr:hover {
 
           <table>
 
-            <thead>
-
-              <tr>
-
-                <th>ALUMNO</th>
-                <th>GRADO</th>
-                <th>GRUPO</th>
-                <th>TURNO</th>
-                <th>ENTRADA</th>
-                <th>SALIDA</th>
-                <th>ESTADO</th>
-                <th>HISTORIAL</th>
-
-              </tr>
-
+            <thead id="tablaEncabezado">
             </thead>
-
 
             <tbody id="tablaAlumnos">
             </tbody>
@@ -930,7 +1055,7 @@ tbody tr:hover {
         id="procesandoPanel"
         class="procesando">
 
-        Actualizando información...
+        Consultando información...
 
       </div>
 
@@ -947,7 +1072,7 @@ tbody tr:hover {
 </div>
 
 
-<!-- MODAL HISTORIAL -->
+<!-- HISTORIAL -->
 
 <div
   id="modalFondo"
@@ -986,12 +1111,19 @@ tbody tr:hover {
       </div>
 
       <div
+        id="modalPeriodo"
+        class="modalPeriodo">
+      </div>
+
+      <div
         id="modalEstado"
         class="estadoModal">
       </div>
 
 
-      <div class="hoyGrid">
+      <div
+        id="modalHoy"
+        class="hoyGrid">
 
         <div class="hoyItem">
 
@@ -1026,7 +1158,7 @@ tbody tr:hover {
 
 
       <div class="historialTitulo">
-        HISTORIAL RECIENTE
+        MOVIMIENTOS DEL PERIODO
       </div>
 
 
@@ -1046,7 +1178,7 @@ tbody tr:hover {
 
 /*
 =================================================
-API APPS SCRIPT
+API
 =================================================
 */
 
@@ -1064,6 +1196,9 @@ let tokenAdmin =
 let solicitudEnCurso =
   false;
 
+let periodoEsHoy =
+  true;
+
 
 /*
 =================================================
@@ -1074,6 +1209,9 @@ INICIO
 window.addEventListener(
   'load',
   function() {
+
+    establecerHoyEnFechas();
+
 
     tokenAdmin =
       sessionStorage.getItem(
@@ -1192,7 +1330,6 @@ async function iniciarSesion() {
     llamarApi(
 
       {
-
         accion:
           'loginAdmin',
 
@@ -1201,7 +1338,6 @@ async function iniciarSesion() {
 
         passwordHash:
           passwordHash
-
       },
 
       function(resultado) {
@@ -1262,7 +1398,6 @@ async function iniciarSesion() {
 
         mostrarPanel();
 
-
         cargarResumen();
 
       }
@@ -1303,7 +1438,205 @@ async function iniciarSesion() {
 
 /*
 =================================================
-RESUMEN ADMIN
+PERIODOS
+=================================================
+*/
+
+function establecerHoyEnFechas() {
+
+  const hoy =
+    fechaLocalISO(
+      new Date()
+    );
+
+
+  document
+    .getElementById(
+      'fechaInicio'
+    )
+    .value =
+    hoy;
+
+
+  document
+    .getElementById(
+      'fechaFin'
+    )
+    .value =
+    hoy;
+
+}
+
+
+function seleccionarPeriodoRapido(
+  tipo
+) {
+
+  const hoy =
+    inicioDia(
+      new Date()
+    );
+
+
+  let inicio =
+    new Date(
+      hoy
+    );
+
+
+  if (
+    tipo === '7'
+  ) {
+
+    inicio.setDate(
+      inicio.getDate() - 6
+    );
+
+  }
+
+
+  else if (
+    tipo === '30'
+  ) {
+
+    inicio.setDate(
+      inicio.getDate() - 29
+    );
+
+  }
+
+
+  document
+    .getElementById(
+      'fechaInicio'
+    )
+    .value =
+    fechaLocalISO(
+      inicio
+    );
+
+
+  document
+    .getElementById(
+      'fechaFin'
+    )
+    .value =
+    fechaLocalISO(
+      hoy
+    );
+
+
+  marcarBotonPeriodo(
+    tipo
+  );
+
+
+  cargarResumen();
+
+}
+
+
+function aplicarPeriodoPersonalizado() {
+
+  const inicio =
+    document
+      .getElementById(
+        'fechaInicio'
+      )
+      .value;
+
+
+  const fin =
+    document
+      .getElementById(
+        'fechaFin'
+      )
+      .value;
+
+
+  if (
+    !inicio ||
+    !fin
+  ) {
+
+    mostrarError(
+      'errorPanel',
+      'Selecciona la fecha inicial y final.'
+    );
+
+    return;
+
+  }
+
+
+  if (
+    inicio > fin
+  ) {
+
+    mostrarError(
+      'errorPanel',
+      'La fecha inicial no puede ser posterior a la fecha final.'
+    );
+
+    return;
+
+  }
+
+
+  marcarBotonPeriodo(
+    'PERSONALIZADO'
+  );
+
+
+  cargarResumen();
+
+}
+
+
+function marcarBotonPeriodo(
+  tipo
+) {
+
+  document
+    .querySelectorAll(
+      '.btnPeriodo'
+    )
+    .forEach(
+      boton =>
+        boton.classList.remove(
+          'activo'
+        )
+    );
+
+
+  const mapa = {
+    HOY: 'periodoHoy',
+    '7': 'periodo7',
+    '30': 'periodo30'
+  };
+
+
+  if (
+    mapa[tipo]
+  ) {
+
+    document
+      .getElementById(
+        mapa[tipo]
+      )
+      .classList
+      .add(
+        'activo'
+      );
+
+  }
+
+}
+
+
+/*
+=================================================
+RESUMEN
 =================================================
 */
 
@@ -1323,70 +1656,89 @@ function cargarResumen() {
   );
 
 
+  const fechaInicio =
+    document
+      .getElementById(
+        'fechaInicio'
+      )
+      .value;
+
+
+  const fechaFin =
+    document
+      .getElementById(
+        'fechaFin'
+      )
+      .value;
+
+
+  if (
+    !fechaInicio ||
+    !fechaFin
+  ) {
+
+    mostrarError(
+      'errorPanel',
+      'Selecciona el periodo de fechas.'
+    );
+
+    return;
+
+  }
+
+
   mostrarProcesando(
     'procesandoPanel',
     true
   );
 
 
-  const turno =
-    document
-      .getElementById(
-        'filtroTurno'
-      )
-      .value;
-
-
-  const grado =
-    document
-      .getElementById(
-        'filtroGrado'
-      )
-      .value;
-
-
-  const grupo =
-    document
-      .getElementById(
-        'filtroGrupo'
-      )
-      .value;
-
-
-  const busqueda =
-    String(
-      document
-        .getElementById(
-          'busqueda'
-        )
-        .value || ''
-    )
-      .trim()
-      .toUpperCase();
-
-
   llamarApi(
 
     {
-
       accion:
         'adminResumen',
 
       token:
         tokenAdmin,
 
+      fechaInicio:
+        fechaInicio,
+
+      fechaFin:
+        fechaFin,
+
       turno:
-        turno,
+        document
+          .getElementById(
+            'filtroTurno'
+          )
+          .value,
 
       grado:
-        grado,
+        document
+          .getElementById(
+            'filtroGrado'
+          )
+          .value,
 
       grupo:
-        grupo,
+        document
+          .getElementById(
+            'filtroGrupo'
+          )
+          .value,
 
       busqueda:
-        busqueda
-
+        String(
+          document
+            .getElementById(
+              'busqueda'
+            )
+            .value || ''
+        )
+          .trim()
+          .toUpperCase()
     },
 
     function(resultado) {
@@ -1459,44 +1811,12 @@ function pintarPanel(
     resultado.resumen || {};
 
 
-  document
-    .getElementById(
-      'cardTotal'
-    )
-    .textContent =
-    resumen.total ?? 0;
+  const periodo =
+    resultado.periodo || {};
 
 
-  document
-    .getElementById(
-      'cardEntradas'
-    )
-    .textContent =
-    resumen.entradas ?? 0;
-
-
-  document
-    .getElementById(
-      'cardSalidas'
-    )
-    .textContent =
-    resumen.salidas ?? 0;
-
-
-  document
-    .getElementById(
-      'cardDentro'
-    )
-    .textContent =
-    resumen.dentro ?? 0;
-
-
-  document
-    .getElementById(
-      'cardSinRegistro'
-    )
-    .textContent =
-    resumen.sinRegistro ?? 0;
+  periodoEsHoy =
+    !!periodo.esHoy;
 
 
   document
@@ -1504,10 +1824,27 @@ function pintarPanel(
       'fechaPanel'
     )
     .textContent =
-    'Fecha: ' +
+    'Consulta realizada: ' +
     (
-      resultado.fecha || ''
+      resultado.fechaConsulta || ''
     );
+
+
+  document
+    .getElementById(
+      'periodoActual'
+    )
+    .textContent =
+    periodoEsHoy
+      ? 'Periodo: HOY · ' +
+        (periodo.inicio || '')
+      : 'Periodo: ' +
+        (periodo.inicio || '') +
+        ' al ' +
+        (periodo.fin || '') +
+        ' · ' +
+        (periodo.diasCalendario || 0) +
+        ' día(s) calendario';
 
 
   if (
@@ -1541,12 +1878,90 @@ function pintarPanel(
   }
 
 
+  if (
+    periodoEsHoy
+  ) {
+
+    configurarTarjeta(
+      1,
+      resumen.totalAlumnos,
+      'ALUMNOS'
+    );
+
+
+    configurarTarjeta(
+      2,
+      resumen.entradas,
+      'ENTRADAS HOY'
+    );
+
+
+    configurarTarjeta(
+      3,
+      resumen.salidas,
+      'SALIDAS HOY'
+    );
+
+
+    configurarTarjeta(
+      4,
+      resumen.dentro,
+      'DENTRO DE LA ESCUELA'
+    );
+
+
+    configurarTarjeta(
+      5,
+      resumen.sinRegistro,
+      'SIN REGISTRO HOY'
+    );
+
+  }
+
+  else {
+
+    configurarTarjeta(
+      1,
+      resumen.alumnosConRegistro,
+      'ALUMNOS CON REGISTRO'
+    );
+
+
+    configurarTarjeta(
+      2,
+      resumen.entradas,
+      'ENTRADAS'
+    );
+
+
+    configurarTarjeta(
+      3,
+      resumen.salidas,
+      'SALIDAS'
+    );
+
+
+    configurarTarjeta(
+      4,
+      resumen.diasActividad,
+      'DÍAS CON ACTIVIDAD'
+    );
+
+
+    configurarTarjeta(
+      5,
+      resumen.movimientosTotales,
+      'MOVIMIENTOS TOTALES'
+    );
+
+  }
+
+
   const filtros =
     resultado.filtros || {};
 
 
-  const partes =
-    [];
+  const partes = [];
 
 
   if (filtros.turno) {
@@ -1592,13 +2007,44 @@ function pintarPanel(
           ' • '
         : ''
     ) +
-    (resumen.total ?? 0) +
-    ' alumno(s)';
+    (
+      resumen.totalAlumnos ?? 0
+    ) +
+    ' alumno(s) en el listado';
 
 
   pintarTabla(
-    resultado.alumnos || []
+    resultado.alumnos || [],
+    periodoEsHoy
   );
+
+}
+
+
+function configurarTarjeta(
+  numero,
+  valor,
+  texto
+) {
+
+  document
+    .getElementById(
+      'card' +
+      numero +
+      'Numero'
+    )
+    .textContent =
+    valor ?? 0;
+
+
+  document
+    .getElementById(
+      'card' +
+      numero +
+      'Texto'
+    )
+    .textContent =
+    texto;
 
 }
 
@@ -1610,8 +2056,60 @@ TABLA
 */
 
 function pintarTabla(
-  alumnos
+  alumnos,
+  esHoy
 ) {
+
+  const encabezado =
+    document
+      .getElementById(
+        'tablaEncabezado'
+      );
+
+
+  if (esHoy) {
+
+    encabezado.innerHTML = `
+
+      <tr>
+
+        <th>ALUMNO</th>
+        <th>GRADO</th>
+        <th>GRUPO</th>
+        <th>TURNO</th>
+        <th>ENTRADA</th>
+        <th>SALIDA</th>
+        <th>ESTADO</th>
+        <th>HISTORIAL</th>
+
+      </tr>
+
+    `;
+
+  }
+
+  else {
+
+    encabezado.innerHTML = `
+
+      <tr>
+
+        <th>ALUMNO</th>
+        <th>GRADO</th>
+        <th>GRUPO</th>
+        <th>TURNO</th>
+        <th>ENTRADAS</th>
+        <th>SALIDAS</th>
+        <th>DÍAS</th>
+        <th>ÚLTIMO REGISTRO</th>
+        <th>HISTORIAL</th>
+
+      </tr>
+
+    `;
+
+  }
+
 
   const cuerpo =
     document
@@ -1630,7 +2128,7 @@ function pintarTabla(
       <tr>
 
         <td
-          colspan="8"
+          colspan="${esHoy ? 8 : 9}"
           class="sinDatos">
 
           No existen alumnos para los filtros seleccionados.
@@ -1646,115 +2144,188 @@ function pintarTabla(
   }
 
 
-  let html =
-    '';
+  let html = '';
 
 
   alumnos.forEach(
     alumno => {
 
-      let claseEstado =
-        'estadoSin';
+      if (esHoy) {
+
+        let claseEstado =
+          'estadoSin';
 
 
-      if (
-        alumno.estado ===
-        'DENTRO DE LA ESCUELA'
-      ) {
+        if (
+          alumno.estado ===
+          'DENTRO DE LA ESCUELA'
+        ) {
 
-        claseEstado =
-          'estadoDentro';
+          claseEstado =
+            'estadoDentro';
+
+        }
+
+        else if (
+          alumno.estado ===
+          'SALIDA REGISTRADA'
+        ) {
+
+          claseEstado =
+            'estadoSalida';
+
+        }
+
+
+        html += `
+
+          <tr>
+
+            <td>
+              ${escapar(
+                alumno.nombre
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.grado
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.grupo
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.turno
+              )}
+            </td>
+
+            <td>
+              ${
+                alumno.entrada
+                  ? escapar(
+                      alumno.entrada
+                    )
+                  : '--'
+              }
+            </td>
+
+            <td>
+              ${
+                alumno.salida
+                  ? escapar(
+                      alumno.salida
+                    )
+                  : '--'
+              }
+            </td>
+
+            <td class="${claseEstado}">
+              ${escapar(
+                alumno.estado
+              )}
+            </td>
+
+            <td>
+              ${botonHistorial(
+                alumno.curp
+              )}
+            </td>
+
+          </tr>
+
+        `;
 
       }
 
+      else {
 
-      else if (
-        alumno.estado ===
-        'SALIDA REGISTRADA'
-      ) {
+        const ultimo =
+          alumno.ultimaFecha
+            ? (
+                alumno.ultimaFecha +
+                ' ' +
+                (
+                  alumno.ultimaHora ||
+                  ''
+                ) +
+                ' ' +
+                (
+                  alumno.ultimoMovimiento ||
+                  ''
+                )
+              )
+            : '--';
 
-        claseEstado =
-          'estadoSalida';
+
+        html += `
+
+          <tr>
+
+            <td>
+              ${escapar(
+                alumno.nombre
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.grado
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.grupo
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.turno
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.entradas
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.salidas
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                alumno.diasActividad
+              )}
+            </td>
+
+            <td>
+              ${escapar(
+                ultimo
+              )}
+            </td>
+
+            <td>
+              ${botonHistorial(
+                alumno.curp
+              )}
+            </td>
+
+          </tr>
+
+        `;
 
       }
-
-
-      html += `
-
-        <tr>
-
-          <td>
-            ${escapar(
-              alumno.nombre
-            )}
-          </td>
-
-          <td>
-            ${escapar(
-              alumno.grado
-            )}
-          </td>
-
-          <td>
-            ${escapar(
-              alumno.grupo
-            )}
-          </td>
-
-          <td>
-            ${escapar(
-              alumno.turno
-            )}
-          </td>
-
-          <td>
-            ${
-              alumno.entrada
-                ? escapar(
-                    alumno.entrada
-                  )
-                : '--'
-            }
-          </td>
-
-          <td>
-            ${
-              alumno.salida
-                ? escapar(
-                    alumno.salida
-                  )
-                : '--'
-            }
-          </td>
-
-          <td
-            class="${claseEstado}">
-
-            ${escapar(
-              alumno.estado
-            )}
-
-          </td>
-
-          <td>
-
-            <button
-              class="btnVer"
-              onclick="verHistorial(
-                '${escaparJs(
-                  alumno.curp
-                )}'
-              )">
-
-              VER
-
-            </button>
-
-          </td>
-
-        </tr>
-
-      `;
 
     }
   );
@@ -1762,6 +2333,29 @@ function pintarTabla(
 
   cuerpo.innerHTML =
     html;
+
+}
+
+
+function botonHistorial(
+  curp
+) {
+
+  return `
+
+    <button
+      class="btnVer"
+      onclick="verHistorial(
+        '${escaparJs(
+          curp
+        )}'
+      )">
+
+      VER
+
+    </button>
+
+  `;
 
 }
 
@@ -1776,15 +2370,25 @@ function verHistorial(
   curp
 ) {
 
-  if (!tokenAdmin) {
-    return;
-  }
+  const fechaInicio =
+    document
+      .getElementById(
+        'fechaInicio'
+      )
+      .value;
+
+
+  const fechaFin =
+    document
+      .getElementById(
+        'fechaFin'
+      )
+      .value;
 
 
   llamarApi(
 
     {
-
       accion:
         'adminHistorial',
 
@@ -1792,8 +2396,13 @@ function verHistorial(
         tokenAdmin,
 
       curp:
-        curp
+        curp,
 
+      fechaInicio:
+        fechaInicio,
+
+      fechaFin:
+        fechaFin
     },
 
     function(resultado) {
@@ -1847,6 +2456,10 @@ function abrirModalHistorial(
     resultado.alumno || {};
 
 
+  const periodo =
+    resultado.periodo || {};
+
+
   const nombre =
     [
       alumno.nombre,
@@ -1883,11 +2496,18 @@ function abrirModalHistorial(
     );
 
 
-  const estado =
-    String(
-      resultado.estadoActual ||
-      'SIN REGISTRO'
-    );
+  document
+    .getElementById(
+      'modalPeriodo'
+    )
+    .textContent =
+    periodo.esHoy
+      ? 'HOY · ' +
+        (periodo.inicio || '')
+      : 'PERIODO · ' +
+        (periodo.inicio || '') +
+        ' al ' +
+        (periodo.fin || '');
 
 
   const estadoDiv =
@@ -1898,11 +2518,12 @@ function abrirModalHistorial(
 
 
   estadoDiv.textContent =
-    estado;
+    resultado.estadoActual ||
+    'SIN REGISTRO';
 
 
   if (
-    estado ===
+    resultado.estadoActual ===
     'DENTRO DE LA ESCUELA'
   ) {
 
@@ -1915,7 +2536,7 @@ function abrirModalHistorial(
   }
 
   else if (
-    estado ===
+    resultado.estadoActual ===
     'SALIDA REGISTRADA'
   ) {
 
@@ -1924,6 +2545,19 @@ function abrirModalHistorial(
 
     estadoDiv.style.color =
       '#1e40af';
+
+  }
+
+  else if (
+    resultado.estadoActual ===
+    'CON REGISTROS'
+  ) {
+
+    estadoDiv.style.background =
+      '#f3e8ff';
+
+    estadoDiv.style.color =
+      '#7c3aed';
 
   }
 
@@ -1936,6 +2570,17 @@ function abrirModalHistorial(
       '#374151';
 
   }
+
+
+  document
+    .getElementById(
+      'modalHoy'
+    )
+    .style
+    .display =
+    periodo.esHoy
+      ? 'grid'
+      : 'none';
 
 
   document
@@ -1978,7 +2623,7 @@ function abrirModalHistorial(
     contenedor.innerHTML = `
 
       <div class="sinDatos">
-        No existen movimientos registrados.
+        No existen movimientos en este periodo.
       </div>
 
     `;
@@ -1987,8 +2632,7 @@ function abrirModalHistorial(
 
   else {
 
-    let html =
-      '';
+    let html = '';
 
 
     historial.forEach(
@@ -2072,7 +2716,7 @@ function cerrarModalDesdeFondo(
 
 /*
 =================================================
-CERRAR SESIÓN
+SESIÓN
 =================================================
 */
 
@@ -2090,13 +2734,11 @@ function cerrarSesion() {
     llamarApi(
 
       {
-
         accion:
           'adminLogout',
 
         token:
           token
-
       },
 
       function() {}
@@ -2110,8 +2752,7 @@ function cerrarSesion() {
 
 function cerrarSesionLocal() {
 
-  tokenAdmin =
-    '';
+  tokenAdmin = '';
 
 
   sessionStorage.removeItem(
@@ -2160,12 +2801,6 @@ function cerrarSesionLocal() {
 
 }
 
-
-/*
-=================================================
-PANTALLAS
-=================================================
-*/
 
 function mostrarPanel() {
 
@@ -2280,12 +2915,9 @@ function llamarApi(
       }
 
 
-      completado =
-        true;
-
+      completado = true;
 
       limpiar();
-
 
       callbackResultado(
         resultado
@@ -2302,21 +2934,15 @@ function llamarApi(
       }
 
 
-      completado =
-        true;
-
+      completado = true;
 
       limpiar();
 
 
       callbackResultado({
-
-        ok:
-          false,
-
+        ok: false,
         mensaje:
           'No fue posible comunicarse con el sistema.'
-
       });
 
     };
@@ -2345,7 +2971,7 @@ function llamarApi(
 
 /*
 =================================================
-SHA-256 EN EL NAVEGADOR
+SHA-256
 =================================================
 */
 
@@ -2367,15 +2993,11 @@ async function sha256(
     );
 
 
-  const hashArray =
-    Array.from(
-      new Uint8Array(
-        hashBuffer
-      )
-    );
-
-
-  return hashArray
+  return Array.from(
+    new Uint8Array(
+      hashBuffer
+    )
+  )
     .map(
       byte =>
         byte
@@ -2392,9 +3014,71 @@ async function sha256(
 
 /*
 =================================================
-UTILIDADES
+FECHAS Y UTILIDADES
 =================================================
 */
+
+function fechaLocalISO(
+  fecha
+) {
+
+  const anio =
+    fecha.getFullYear();
+
+
+  const mes =
+    String(
+      fecha.getMonth() + 1
+    )
+      .padStart(
+        2,
+        '0'
+      );
+
+
+  const dia =
+    String(
+      fecha.getDate()
+    )
+      .padStart(
+        2,
+        '0'
+      );
+
+
+  return (
+    anio +
+    '-' +
+    mes +
+    '-' +
+    dia
+  );
+
+}
+
+
+function inicioDia(
+  fecha
+) {
+
+  const copia =
+    new Date(
+      fecha
+    );
+
+
+  copia.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  return copia;
+
+}
+
 
 function mostrarProcesando(
   id,
@@ -2493,7 +3177,7 @@ function escaparJs(
 
 /*
 =================================================
-ENTER EN LOGIN / BÚSQUEDA
+ENTER
 =================================================
 */
 
