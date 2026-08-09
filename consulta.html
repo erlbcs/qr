@@ -28,7 +28,7 @@ body {
 }
 
 .app {
-  max-width: 540px;
+  max-width: 560px;
   margin: auto;
   min-height: 100vh;
   background: #ffffff;
@@ -65,6 +65,34 @@ body {
   box-shadow: 0 3px 12px rgba(0,0,0,.06);
 }
 
+.oculto {
+  display: none !important;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 7px;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  background: white;
+  color: #374151;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.tab.activo {
+  background: #173b65;
+  border-color: #173b65;
+  color: white;
+}
+
 label {
   display: block;
   margin-bottom: 6px;
@@ -72,29 +100,25 @@ label {
   font-weight: bold;
 }
 
-input,
-select {
+input {
   width: 100%;
-  padding: 13px;
+  padding: 14px;
+  margin-bottom: 15px;
   border: 2px solid #d1d5db;
   border-radius: 10px;
-  font-size: 16px;
-  background: white;
+  font-size: 17px;
   outline: none;
 }
 
-input:focus,
-select:focus {
+input:focus {
   border-color: #2563eb;
 }
 
-#curp,
-#codigo {
+.mayusculas {
   text-transform: uppercase;
-  margin-bottom: 15px;
 }
 
-.btnConsultar {
+.btnPrincipal {
   width: 100%;
   padding: 15px;
   border: none;
@@ -106,11 +130,11 @@ select:focus {
   cursor: pointer;
 }
 
-.btnConsultar:disabled {
+.btnPrincipal:disabled {
   opacity: .6;
 }
 
-#procesando {
+.procesando {
   display: none;
   margin-top: 12px;
   text-align: center;
@@ -118,7 +142,7 @@ select:focus {
   color: #173b65;
 }
 
-#error {
+.error {
   display: none;
   margin-top: 15px;
   padding: 14px;
@@ -130,8 +154,12 @@ select:focus {
   font-weight: bold;
 }
 
-#resultado {
-  display: none;
+.aviso {
+  margin-top: 15px;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  color: #6b7280;
 }
 
 .sesionInfo {
@@ -141,6 +169,69 @@ select:focus {
   border-radius: 9px;
   text-align: center;
   color: #1e40af;
+  font-size: 13px;
+}
+
+.tutorNombre {
+  font-size: 21px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.tutorSubtitulo {
+  margin-top: 5px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.seccionTitulo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.hijoCard {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.hijoCard:active {
+  transform: scale(.99);
+}
+
+.hijoNombre {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.25;
+}
+
+.hijoDatos {
+  margin-top: 5px;
+  color: #6b7280;
+}
+
+.hijoEstado {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.hijoHoras {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.hijoHora {
+  flex: 1;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
   font-size: 13px;
 }
 
@@ -192,12 +283,6 @@ select:focus {
   margin-top: 5px;
   font-size: 22px;
   font-weight: bold;
-}
-
-.seccionTitulo {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 14px;
 }
 
 .movimientosHoy {
@@ -338,7 +423,7 @@ select:focus {
   padding: 22px;
 }
 
-.btnActualizar,
+.btnSecundario,
 .btnCerrarSesion {
   width: 100%;
   margin-top: 10px;
@@ -349,7 +434,7 @@ select:focus {
   cursor: pointer;
 }
 
-.btnActualizar {
+.btnSecundario {
   border: 2px solid #173b65;
   background: white;
   color: #173b65;
@@ -361,20 +446,10 @@ select:focus {
   color: white;
 }
 
-.aviso {
-  margin-top: 15px;
-  font-size: 12px;
-  line-height: 1.4;
-  text-align: center;
-  color: #6b7280;
-}
-
 @media (max-width: 380px) {
-
   .filtros {
     grid-template-columns: 1fr;
   }
-
 }
 
 </style>
@@ -400,64 +475,193 @@ select:focus {
 
   <div class="contenido">
 
+
+    <!-- LOGIN -->
+
     <div
-      id="formulario"
+      id="pantallaLogin"
       class="card">
 
-      <label for="curp">
-        CURP DEL ALUMNO
-      </label>
+      <div class="tabs">
 
-      <input
-        id="curp"
-        type="text"
-        maxlength="18"
-        autocomplete="off"
-        placeholder="Ingrese la CURP">
+        <button
+          id="tabTutor"
+          class="tab activo"
+          onclick="cambiarTipoAcceso('TUTOR')">
 
+          ACCESO TUTOR
 
-      <label for="codigo">
-        CÓDIGO
-      </label>
+        </button>
 
-      <input
-        id="codigo"
-        type="password"
-        maxlength="10"
-        autocomplete="off"
-        placeholder="Ingrese el código">
+        <button
+          id="tabAlumno"
+          class="tab"
+          onclick="cambiarTipoAcceso('ALUMNO')">
 
+          ACCESO ALUMNO
 
-      <button
-        id="btnConsultar"
-        class="btnConsultar"
-        onclick="consultar()">
+        </button>
 
-        CONSULTAR
-
-      </button>
-
-
-      <div id="procesando">
-        Consultando información...
       </div>
 
 
-      <div id="error"></div>
+      <div id="loginTutor">
+
+        <label for="idTutor">
+          ID TUTOR
+        </label>
+
+        <input
+          id="idTutor"
+          class="mayusculas"
+          type="text"
+          autocomplete="off"
+          placeholder="Ejemplo: T0001">
+
+
+        <label for="codigoTutor">
+          CÓDIGO
+        </label>
+
+        <input
+          id="codigoTutor"
+          type="password"
+          autocomplete="off"
+          placeholder="Ingrese el código">
+
+
+        <button
+          id="btnTutor"
+          class="btnPrincipal"
+          onclick="consultarTutor()">
+
+          INGRESAR
+
+        </button>
+
+      </div>
+
+
+      <div
+        id="loginAlumno"
+        class="oculto">
+
+        <label for="curp">
+          CURP DEL ALUMNO
+        </label>
+
+        <input
+          id="curp"
+          class="mayusculas"
+          type="text"
+          maxlength="18"
+          autocomplete="off"
+          placeholder="Ingrese la CURP">
+
+
+        <label for="codigoAlumno">
+          CÓDIGO
+        </label>
+
+        <input
+          id="codigoAlumno"
+          type="password"
+          autocomplete="off"
+          placeholder="Ingrese el código">
+
+
+        <button
+          id="btnAlumno"
+          class="btnPrincipal"
+          onclick="consultarAlumnoIndividual()">
+
+          CONSULTAR
+
+        </button>
+
+      </div>
+
+
+      <div
+        id="procesandoLogin"
+        class="procesando">
+
+        Consultando información...
+
+      </div>
+
+
+      <div
+        id="errorLogin"
+        class="error">
+      </div>
 
 
       <div class="aviso">
-        Si el acceso es correcto, este dispositivo
-        recordará al alumno para futuras consultas.
+        El acceso quedará guardado en este dispositivo
+        hasta que se cierre la sesión.
       </div>
 
     </div>
 
 
-    <div id="resultado">
+    <!-- LISTA DE HIJOS -->
+
+    <div
+      id="pantallaHijos"
+      class="oculto">
 
       <div class="sesionInfo">
-        Acceso guardado en este dispositivo.
+        Sesión de tutor guardada en este dispositivo.
+      </div>
+
+
+      <div class="card">
+
+        <div
+          id="nombreTutor"
+          class="tutorNombre">
+        </div>
+
+        <div class="tutorSubtitulo">
+          MIS ALUMNOS
+        </div>
+
+      </div>
+
+
+      <div id="listaHijos"></div>
+
+
+      <button
+        class="btnSecundario"
+        onclick="actualizarTutor()">
+
+        ACTUALIZAR INFORMACIÓN
+
+      </button>
+
+
+      <button
+        class="btnCerrarSesion"
+        onclick="cerrarSesion()">
+
+        CERRAR SESIÓN
+
+      </button>
+
+    </div>
+
+
+    <!-- DETALLE DEL ALUMNO -->
+
+    <div
+      id="pantallaAlumno"
+      class="oculto">
+
+      <div
+        id="sesionAlumnoInfo"
+        class="sesionInfo">
       </div>
 
 
@@ -588,7 +792,6 @@ select:focus {
           id="rangoPersonalizado"
           class="rangoPersonalizado">
 
-
           <div class="campoFecha">
 
             <label for="fechaInicio">
@@ -641,10 +844,20 @@ select:focus {
 
 
       <button
-        class="btnActualizar"
-        onclick="actualizarConsulta()">
+        class="btnSecundario"
+        onclick="actualizarAlumnoActual()">
 
         ACTUALIZAR REGISTROS
+
+      </button>
+
+
+      <button
+        id="btnVolverHijos"
+        class="btnSecundario oculto"
+        onclick="volverAHijos()">
+
+        ← VOLVER A MIS ALUMNOS
 
       </button>
 
@@ -653,7 +866,7 @@ select:focus {
         class="btnCerrarSesion"
         onclick="cerrarSesion()">
 
-        CERRAR SESIÓN / CAMBIAR ALUMNO
+        CERRAR SESIÓN
 
       </button>
 
@@ -666,9 +879,10 @@ select:focus {
 
 <script>
 
+
 /*
 =================================================
-PEGA AQUÍ TU URL /exec ACTUAL DE APPS SCRIPT
+URL DE GOOGLE APPS SCRIPT
 =================================================
 */
 
@@ -676,21 +890,121 @@ const URL_API =
   'https://script.google.com/macros/s/AKfycbxeeSfxFcOKTFAbm8HMa8fGm_xpCAafd_HDfChpsBkiDoQbNMwG80ZjT0u1Ck1J4R1O/exec';
 
 
-const CLAVE_CURP =
+/*
+=================================================
+LOCAL STORAGE
+=================================================
+*/
+
+const CLAVE_TIPO =
+  'control_escolar_tipo';
+
+const CLAVE_ID_TUTOR =
+  'control_escolar_id_tutor';
+
+const CLAVE_CODIGO_TUTOR =
+  'control_escolar_codigo_tutor';
+
+const CLAVE_CURP_ALUMNO =
   'control_escolar_curp';
 
-const CLAVE_CODIGO =
+const CLAVE_CODIGO_ALUMNO =
   'control_escolar_codigo';
 
 
-let consultando =
-  false;
+let tipoAcceso =
+  'TUTOR';
 
 let historialCompleto =
   [];
 
 let filtroActual =
   '7';
+
+let curpAlumnoActual =
+  '';
+
+let consultaEnCurso =
+  false;
+
+
+/*
+=================================================
+INICIO
+=================================================
+*/
+
+window.addEventListener(
+  'load',
+  function() {
+
+    recuperarSesion();
+
+  }
+);
+
+
+/*
+=================================================
+CAMBIAR TIPO DE ACCESO
+=================================================
+*/
+
+function cambiarTipoAcceso(
+  tipo
+) {
+
+  tipoAcceso =
+    tipo;
+
+
+  ocultarError();
+
+
+  document
+    .getElementById(
+      'tabTutor'
+    )
+    .classList
+    .toggle(
+      'activo',
+      tipo === 'TUTOR'
+    );
+
+
+  document
+    .getElementById(
+      'tabAlumno'
+    )
+    .classList
+    .toggle(
+      'activo',
+      tipo === 'ALUMNO'
+    );
+
+
+  document
+    .getElementById(
+      'loginTutor'
+    )
+    .classList
+    .toggle(
+      'oculto',
+      tipo !== 'TUTOR'
+    );
+
+
+  document
+    .getElementById(
+      'loginAlumno'
+    )
+    .classList
+    .toggle(
+      'oculto',
+      tipo !== 'ALUMNO'
+    );
+
+}
 
 
 /*
@@ -699,65 +1013,101 @@ RECUPERAR SESIÓN
 =================================================
 */
 
-window.addEventListener(
-  'load',
-  function() {
+function recuperarSesion() {
 
-    const curpGuardada =
+  const tipo =
+    localStorage.getItem(
+      CLAVE_TIPO
+    );
+
+
+  if (
+    tipo === 'TUTOR'
+  ) {
+
+    const idTutor =
       localStorage.getItem(
-        CLAVE_CURP
+        CLAVE_ID_TUTOR
       );
 
-    const codigoGuardado =
+
+    const codigo =
       localStorage.getItem(
-        CLAVE_CODIGO
+        CLAVE_CODIGO_TUTOR
       );
 
 
     if (
-      curpGuardada &&
-      codigoGuardado
+      idTutor &&
+      codigo
     ) {
 
-      document
-        .getElementById('curp')
-        .value =
-        curpGuardada;
+      cargarTutor(
+        idTutor,
+        codigo,
+        true
+      );
 
-
-      document
-        .getElementById('codigo')
-        .value =
-        codigoGuardado;
-
-
-      consultar(true);
+      return;
 
     }
 
   }
-);
+
+
+  if (
+    tipo === 'ALUMNO'
+  ) {
+
+    const curp =
+      localStorage.getItem(
+        CLAVE_CURP_ALUMNO
+      );
+
+
+    const codigo =
+      localStorage.getItem(
+        CLAVE_CODIGO_ALUMNO
+      );
+
+
+    if (
+      curp &&
+      codigo
+    ) {
+
+      cargarAlumnoIndividual(
+        curp,
+        codigo,
+        true
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  mostrarLogin();
+
+}
 
 
 /*
 =================================================
-CONSULTAR
+CONSULTAR TUTOR
 =================================================
 */
 
-function consultar(
-  consultaAutomatica = false
-) {
+function consultarTutor() {
 
-  if (consultando) {
-    return;
-  }
-
-
-  const curp =
+  const idTutor =
     limpiarTexto(
       document
-        .getElementById('curp')
+        .getElementById(
+          'idTutor'
+        )
         .value
     );
 
@@ -765,23 +1115,18 @@ function consultar(
   const codigo =
     limpiarTexto(
       document
-        .getElementById('codigo')
+        .getElementById(
+          'codigoTutor'
+        )
         .value
     );
 
 
-  ocultarError();
+  if (!idTutor) {
 
-
-  if (!curp) {
-
-    if (!consultaAutomatica) {
-
-      mostrarError(
-        'Ingresa la CURP del alumno.'
-      );
-
-    }
+    mostrarError(
+      'Ingresa el ID TUTOR.'
+    );
 
     return;
 
@@ -790,27 +1135,8 @@ function consultar(
 
   if (!codigo) {
 
-    if (!consultaAutomatica) {
-
-      mostrarError(
-        'Ingresa el código.'
-      );
-
-    }
-
-    return;
-
-  }
-
-
-  if (
-    URL_API.includes(
-      'PEGA_AQUI'
-    )
-  ) {
-
     mostrarError(
-      'La página no tiene configurada la URL de Apps Script.'
+      'Ingresa el código.'
     );
 
     return;
@@ -818,27 +1144,115 @@ function consultar(
   }
 
 
-  consultando =
-    true;
-
-
-  document
-    .getElementById('btnConsultar')
-    .disabled =
-    true;
-
-
-  document
-    .getElementById('procesando')
-    .style
-    .display =
-    'block';
-
-
-  enviarConsulta(
-    curp,
+  cargarTutor(
+    idTutor,
     codigo,
-    consultaAutomatica
+    false
+  );
+
+}
+
+
+function cargarTutor(
+  idTutor,
+  codigo,
+  automatico
+) {
+
+  if (
+    consultaEnCurso
+  ) {
+    return;
+  }
+
+
+  consultaEnCurso =
+    true;
+
+
+  mostrarProcesando(
+    true
+  );
+
+
+  llamarApi(
+
+    {
+
+      accion:
+        'consultarTutor',
+
+      idTutor:
+        idTutor,
+
+      codigo:
+        codigo
+
+    },
+
+    function(resultado) {
+
+      consultaEnCurso =
+        false;
+
+
+      mostrarProcesando(
+        false
+      );
+
+
+      if (
+        !resultado ||
+        !resultado.ok
+      ) {
+
+        if (automatico) {
+
+          borrarSesion();
+
+        }
+
+
+        mostrarLogin();
+
+
+        mostrarError(
+          resultado &&
+          resultado.mensaje
+            ? resultado.mensaje
+            : 'No fue posible iniciar sesión.'
+        );
+
+
+        return;
+
+      }
+
+
+      localStorage.setItem(
+        CLAVE_TIPO,
+        'TUTOR'
+      );
+
+
+      localStorage.setItem(
+        CLAVE_ID_TUTOR,
+        idTutor
+      );
+
+
+      localStorage.setItem(
+        CLAVE_CODIGO_TUTOR,
+        codigo
+      );
+
+
+      mostrarHijosTutor(
+        resultado
+      );
+
+    }
+
   );
 
 }
@@ -846,118 +1260,355 @@ function consultar(
 
 /*
 =================================================
-ENVIAR CONSULTA
+MOSTRAR HIJOS
 =================================================
 */
 
-function enviarConsulta(
-  curp,
-  codigo,
-  consultaAutomatica
+function mostrarHijosTutor(
+  resultado
 ) {
 
-  const callback =
-    'respuestaConsulta_' +
-    Date.now();
+  document
+    .getElementById(
+      'nombreTutor'
+    )
+    .textContent =
+    resultado.tutor.nombre ||
+    resultado.tutor.idTutor;
 
 
-  const script =
-    document.createElement(
-      'script'
+  const contenedor =
+    document
+      .getElementById(
+        'listaHijos'
+      );
+
+
+  const hijos =
+    resultado.hijos || [];
+
+
+  if (
+    hijos.length === 0
+  ) {
+
+    contenedor.innerHTML = `
+
+      <div class="card">
+
+        <div class="sinRegistros">
+
+          No existen alumnos asociados a este tutor.
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+  else {
+
+    let html =
+      '';
+
+
+    hijos.forEach(
+      hijo => {
+
+        const nombre =
+          [
+            hijo.nombre,
+            hijo.primerApellido,
+            hijo.segundoApellido
+          ]
+            .filter(Boolean)
+            .join(' ');
+
+
+        let estado =
+          'SIN REGISTRO';
+
+
+        let icono =
+          '⚪';
+
+
+        if (
+          hijo.estadoActual ===
+          'DENTRO DE LA ESCUELA'
+        ) {
+
+          estado =
+            'DENTRO DE LA ESCUELA';
+
+          icono =
+            '🟢';
+
+        }
+
+
+        else if (
+          hijo.estadoActual ===
+          'SALIDA REGISTRADA'
+        ) {
+
+          estado =
+            'SALIDA REGISTRADA';
+
+          icono =
+            '🔵';
+
+        }
+
+
+        html += `
+
+          <div
+            class="hijoCard"
+            onclick="abrirHijo(
+              '${escaparJs(
+                hijo.curp
+              )}'
+            )">
+
+            <div class="hijoNombre">
+
+              ${escapar(
+                nombre
+              )}
+
+            </div>
+
+
+            <div class="hijoDatos">
+
+              ${escapar(
+                hijo.grado
+              )}°
+              ${escapar(
+                hijo.grupo
+              )}
+
+              • ${escapar(
+                hijo.turno
+              )}
+
+            </div>
+
+
+            <div class="hijoEstado">
+
+              ${icono}
+              ${escapar(
+                estado
+              )}
+
+            </div>
+
+
+            <div class="hijoHoras">
+
+              <div class="hijoHora">
+
+                ENTRADA<br>
+
+                <strong>
+                  ${
+                    hijo.entradaHoy
+                      ? escapar(
+                          hijo.entradaHoy
+                        )
+                      : '--'
+                  }
+                </strong>
+
+              </div>
+
+
+              <div class="hijoHora">
+
+                SALIDA<br>
+
+                <strong>
+                  ${
+                    hijo.salidaHoy
+                      ? escapar(
+                          hijo.salidaHoy
+                        )
+                      : '--'
+                  }
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
     );
 
 
-  const limpiar =
-    () => {
+    contenedor.innerHTML =
+      html;
 
-      try {
-
-        delete window[
-          callback
-        ];
-
-      }
-      catch (e) {}
+  }
 
 
-      if (
-        script.parentNode
-      ) {
+  mostrarPantalla(
+    'HIJOS'
+  );
 
-        script.parentNode
-          .removeChild(
-            script
-          );
-
-      }
-
-    };
+}
 
 
-  window[callback] =
+/*
+=================================================
+ABRIR HIJO
+=================================================
+*/
+
+function abrirHijo(
+  curp
+) {
+
+  curpAlumnoActual =
+    curp;
+
+
+  const idTutor =
+    localStorage.getItem(
+      CLAVE_ID_TUTOR
+    );
+
+
+  const codigo =
+    localStorage.getItem(
+      CLAVE_CODIGO_TUTOR
+    );
+
+
+  llamarApi(
+
+    {
+
+      accion:
+        'consultarHijoTutor',
+
+      idTutor:
+        idTutor,
+
+      codigo:
+        codigo,
+
+      curp:
+        curp
+
+    },
+
     function(resultado) {
 
-      limpiar();
+      if (
+        !resultado ||
+        !resultado.ok
+      ) {
+
+        alert(
+          resultado &&
+          resultado.mensaje
+            ? resultado.mensaje
+            : 'No fue posible consultar al alumno.'
+        );
+
+        return;
+
+      }
 
 
-      consultando =
-        false;
-
-
-      document
-        .getElementById('btnConsultar')
-        .disabled =
-        false;
-
-
-      document
-        .getElementById('procesando')
-        .style
-        .display =
-        'none';
-
-
-      procesarConsulta(
+      mostrarDetalleAlumno(
         resultado,
-        curp,
-        codigo,
-        consultaAutomatica
+        true
       );
 
-    };
+    }
+
+  );
+
+}
 
 
-  script.onerror =
-    function() {
+/*
+=================================================
+CONSULTA INDIVIDUAL
+=================================================
+*/
 
-      limpiar();
+function consultarAlumnoIndividual() {
 
-      consultando =
-        false;
-
-
+  const curp =
+    limpiarTexto(
       document
-        .getElementById('btnConsultar')
-        .disabled =
-        false;
+        .getElementById(
+          'curp'
+        )
+        .value
+    );
 
 
+  const codigo =
+    limpiarTexto(
       document
-        .getElementById('procesando')
-        .style
-        .display =
-        'none';
+        .getElementById(
+          'codigoAlumno'
+        )
+        .value
+    );
 
 
-      mostrarError(
-        'No fue posible comunicarse con el sistema.'
-      );
+  if (!curp) {
 
-    };
+    mostrarError(
+      'Ingresa la CURP.'
+    );
+
+    return;
+
+  }
 
 
-  const parametros =
-    new URLSearchParams({
+  if (!codigo) {
+
+    mostrarError(
+      'Ingresa el código.'
+    );
+
+    return;
+
+  }
+
+
+  cargarAlumnoIndividual(
+    curp,
+    codigo,
+    false
+  );
+
+}
+
+
+function cargarAlumnoIndividual(
+  curp,
+  codigo,
+  automatico
+) {
+
+  llamarApi(
+
+    {
 
       accion:
         'consultar',
@@ -966,88 +1617,90 @@ function enviarConsulta(
         curp,
 
       codigo:
-        codigo,
+        codigo
 
-      callback:
-        callback
+    },
 
-    });
+    function(resultado) {
+
+      if (
+        !resultado ||
+        !resultado.ok
+      ) {
+
+        if (automatico) {
+
+          borrarSesion();
+
+        }
 
 
-  script.src =
-    URL_API +
-    '?' +
-    parametros.toString();
+        mostrarLogin();
 
 
-  document.body
-    .appendChild(
-      script
-    );
+        mostrarError(
+          resultado &&
+          resultado.mensaje
+            ? resultado.mensaje
+            : 'CURP o código incorrecto.'
+        );
+
+
+        return;
+
+      }
+
+
+      localStorage.setItem(
+        CLAVE_TIPO,
+        'ALUMNO'
+      );
+
+
+      localStorage.setItem(
+        CLAVE_CURP_ALUMNO,
+        curp
+      );
+
+
+      localStorage.setItem(
+        CLAVE_CODIGO_ALUMNO,
+        codigo
+      );
+
+
+      curpAlumnoActual =
+        curp;
+
+
+      mostrarDetalleAlumno(
+        resultado,
+        false
+      );
+
+    }
+
+  );
 
 }
 
 
 /*
 =================================================
-PROCESAR RESULTADO
+DETALLE DEL ALUMNO
 =================================================
 */
 
-function procesarConsulta(
+function mostrarDetalleAlumno(
   resultado,
-  curp,
-  codigo,
-  consultaAutomatica
+  esTutor
 ) {
-
-  if (
-    !resultado ||
-    !resultado.ok
-  ) {
-
-    if (
-      consultaAutomatica
-    ) {
-
-      borrarSesion();
-
-    }
-
-
-    mostrarFormulario();
-
-
-    mostrarError(
-      resultado &&
-      resultado.mensaje
-        ? resultado.mensaje
-        : 'No fue posible realizar la consulta.'
-    );
-
-
-    return;
-
-  }
-
-
-  localStorage.setItem(
-    CLAVE_CURP,
-    curp
-  );
-
-
-  localStorage.setItem(
-    CLAVE_CODIGO,
-    codigo
-  );
-
 
   const alumno =
     resultado.alumno;
 
 
-  const nombreCompleto =
+  const nombre =
     [
 
       alumno.nombre,
@@ -1066,7 +1719,7 @@ function procesarConsulta(
       'nombreAlumno'
     )
     .textContent =
-    nombreCompleto;
+    nombre;
 
 
   document
@@ -1082,9 +1735,30 @@ function procesarConsulta(
     escapar(
       alumno.grupo
     ) +
-    ' &nbsp; • &nbsp; ' +
+    ' • ' +
     escapar(
       alumno.turno
+    );
+
+
+  document
+    .getElementById(
+      'sesionAlumnoInfo'
+    )
+    .textContent =
+    esTutor
+      ? 'Consulta desde la cuenta del tutor.'
+      : 'Acceso individual guardado en este dispositivo.';
+
+
+  document
+    .getElementById(
+      'btnVolverHijos'
+    )
+    .classList
+    .toggle(
+      'oculto',
+      !esTutor
     );
 
 
@@ -1130,10 +1804,97 @@ function procesarConsulta(
     resultado.historial || [];
 
 
-  aplicarFiltroActual();
+  filtroActual =
+    '7';
 
 
-  mostrarResultado();
+  seleccionarFiltro(
+    '7'
+  );
+
+
+  mostrarPantalla(
+    'ALUMNO'
+  );
+
+}
+
+
+/*
+=================================================
+ACTUALIZAR
+=================================================
+*/
+
+function actualizarTutor() {
+
+  const id =
+    localStorage.getItem(
+      CLAVE_ID_TUTOR
+    );
+
+
+  const codigo =
+    localStorage.getItem(
+      CLAVE_CODIGO_TUTOR
+    );
+
+
+  cargarTutor(
+    id,
+    codigo,
+    true
+  );
+
+}
+
+
+function actualizarAlumnoActual() {
+
+  const tipo =
+    localStorage.getItem(
+      CLAVE_TIPO
+    );
+
+
+  if (
+    tipo === 'TUTOR'
+  ) {
+
+    abrirHijo(
+      curpAlumnoActual
+    );
+
+  }
+
+  else {
+
+    const curp =
+      localStorage.getItem(
+        CLAVE_CURP_ALUMNO
+      );
+
+
+    const codigo =
+      localStorage.getItem(
+        CLAVE_CODIGO_ALUMNO
+      );
+
+
+    cargarAlumnoIndividual(
+      curp,
+      codigo,
+      true
+    );
+
+  }
+
+}
+
+
+function volverAHijos() {
+
+  actualizarTutor();
 
 }
 
@@ -1191,26 +1952,20 @@ function seleccionarFiltro(
     );
 
 
-  const rango =
-    document
-      .getElementById(
-        'rangoPersonalizado'
-      );
+  document
+    .getElementById(
+      'rangoPersonalizado'
+    )
+    .style
+    .display =
+    filtro === 'RANGO'
+      ? 'block'
+      : 'none';
 
 
   if (
-    filtro === 'RANGO'
+    filtro !== 'RANGO'
   ) {
-
-    rango.style.display =
-      'block';
-
-  }
-
-  else {
-
-    rango.style.display =
-      'none';
 
     aplicarFiltroActual();
 
@@ -1221,25 +1976,19 @@ function seleccionarFiltro(
 
 function aplicarFiltroActual() {
 
-  if (
-    filtroActual === 'RANGO'
-  ) {
-
-    aplicarRango();
-
-    return;
-
-  }
-
-
   const hoy =
     inicioDia(
       new Date()
     );
 
 
-  let fechaDesde;
-  let fechaHasta =
+  let desde =
+    new Date(
+      hoy
+    );
+
+
+  const hasta =
     finDia(
       new Date()
     );
@@ -1249,7 +1998,7 @@ function aplicarFiltroActual() {
     filtroActual === 'HOY'
   ) {
 
-    fechaDesde =
+    desde =
       hoy;
 
   }
@@ -1259,13 +2008,8 @@ function aplicarFiltroActual() {
     filtroActual === '7'
   ) {
 
-    fechaDesde =
-      new Date(
-        hoy
-      );
-
-    fechaDesde.setDate(
-      fechaDesde.getDate() - 6
+    desde.setDate(
+      desde.getDate() - 6
     );
 
   }
@@ -1273,13 +2017,8 @@ function aplicarFiltroActual() {
 
   else {
 
-    fechaDesde =
-      new Date(
-        hoy
-      );
-
-    fechaDesde.setDate(
-      fechaDesde.getDate() - 29
+    desde.setDate(
+      desde.getDate() - 29
     );
 
   }
@@ -1287,8 +2026,8 @@ function aplicarFiltroActual() {
 
   const filtrados =
     filtrarHistorial(
-      fechaDesde,
-      fechaHasta
+      desde,
+      hasta
     );
 
 
@@ -1297,39 +2036,17 @@ function aplicarFiltroActual() {
   );
 
 
-  let texto =
-    '';
-
-
-  if (
+  const texto =
     filtroActual === 'HOY'
-  ) {
-
-    texto =
-      'Mostrando registros de hoy';
-
-  }
-
-  else if (
-    filtroActual === '7'
-  ) {
-
-    texto =
-      'Mostrando los últimos 7 días';
-
-  }
-
-  else {
-
-    texto =
-      'Mostrando los últimos 30 días';
-
-  }
+      ? 'Registros de hoy'
+      : filtroActual === '7'
+        ? 'Últimos 7 días'
+        : 'Últimos 30 días';
 
 
   actualizarResumen(
     texto,
-    filtrados.length
+    filtrados
   );
 
 }
@@ -1363,28 +2080,32 @@ function aplicarRango() {
         'resumenFiltro'
       )
       .textContent =
-      'Selecciona la fecha inicial y final.';
+      'Selecciona ambas fechas.';
 
     return;
 
   }
 
 
-  let fechaDesde =
-    crearFechaLocalISO(
-      inicio
+  const desde =
+    inicioDia(
+      crearFechaLocalISO(
+        inicio
+      )
     );
 
 
-  let fechaHasta =
-    crearFechaLocalISO(
-      fin
+  const hasta =
+    finDia(
+      crearFechaLocalISO(
+        fin
+      )
     );
 
 
   if (
-    fechaDesde >
-    fechaHasta
+    desde >
+    hasta
   ) {
 
     document
@@ -1392,29 +2113,17 @@ function aplicarRango() {
         'resumenFiltro'
       )
       .textContent =
-      'La fecha inicial no puede ser posterior a la fecha final.';
+      'La fecha inicial no puede ser posterior a la final.';
 
     return;
 
   }
 
 
-  fechaDesde =
-    inicioDia(
-      fechaDesde
-    );
-
-
-  fechaHasta =
-    finDia(
-      fechaHasta
-    );
-
-
   const filtrados =
     filtrarHistorial(
-      fechaDesde,
-      fechaHasta
+      desde,
+      hasta
     );
 
 
@@ -1425,7 +2134,7 @@ function aplicarRango() {
 
   actualizarResumen(
     'Rango seleccionado',
-    filtrados.length
+    filtrados
   );
 
 }
@@ -1445,12 +2154,8 @@ function filtrarHistorial(
         );
 
 
-      if (!fecha) {
-        return false;
-      }
-
-
       return (
+        fecha &&
         fecha >= desde &&
         fecha <= hasta
       );
@@ -1463,7 +2168,7 @@ function filtrarHistorial(
 
 /*
 =================================================
-MOSTRAR HISTORIAL POR DÍA
+HISTORIAL AGRUPADO
 =================================================
 */
 
@@ -1479,7 +2184,6 @@ function mostrarHistorialAgrupado(
 
 
   if (
-    !registros ||
     registros.length === 0
   ) {
 
@@ -1527,24 +2231,16 @@ function mostrarHistorialAgrupado(
       }
 
 
-      const movimiento =
+      const mov =
         String(
-          registro.movimiento || ''
+          registro.movimiento
         )
           .toUpperCase();
 
 
       if (
-        movimiento ===
-        'ENTRADA'
+        mov === 'ENTRADA'
       ) {
-
-        /*
-        Como los registros vienen
-        de reciente a antiguo,
-        conservamos la entrada más antigua
-        de ese día.
-        */
 
         dias[
           registro.fecha
@@ -1555,17 +2251,11 @@ function mostrarHistorialAgrupado(
 
 
       if (
-        movimiento ===
-        'SALIDA' &&
+        mov === 'SALIDA' &&
         !dias[
           registro.fecha
         ].salida
       ) {
-
-        /*
-        Conservamos la salida
-        más reciente del día.
-        */
 
         dias[
           registro.fecha
@@ -1581,19 +2271,12 @@ function mostrarHistorialAgrupado(
   const fechas =
     Object.keys(
       dias
-    );
-
-
-  fechas.sort(
-    function(a, b) {
-
-      return (
-        convertirFechaRegistro(b) -
-        convertirFechaRegistro(a)
+    )
+      .sort(
+        (a, b) =>
+          convertirFechaRegistro(b) -
+          convertirFechaRegistro(a)
       );
-
-    }
-  );
 
 
   let html =
@@ -1626,11 +2309,7 @@ function mostrarHistorialAgrupado(
 
           <div class="diaMovimientos">
 
-            <div
-              class="
-                diaMovimiento
-                diaEntrada
-              ">
+            <div class="diaMovimiento diaEntrada">
 
               <div class="diaTipo">
                 ENTRADA
@@ -1651,11 +2330,7 @@ function mostrarHistorialAgrupado(
             </div>
 
 
-            <div
-              class="
-                diaMovimiento
-                diaSalida
-              ">
+            <div class="diaMovimiento diaSalida">
 
               <div class="diaTipo">
                 SALIDA
@@ -1691,45 +2366,17 @@ function mostrarHistorialAgrupado(
 }
 
 
-/*
-=================================================
-RESUMEN DEL FILTRO
-=================================================
-*/
-
 function actualizarResumen(
   texto,
-  cantidadMovimientos
+  registros
 ) {
 
   const dias =
-    new Set();
-
-
-  let entradas =
-    0;
-
-  let salidas =
-    0;
-
-
-  const filtroVisible =
-    document
-      .querySelectorAll(
-        '.diaCard'
-      );
-
-
-  historialCompleto.forEach(
-    registro => {
-
-      /*
-      El conteo detallado no es crítico
-      para el funcionamiento.
-      */
-
-    }
-  );
+    new Set(
+      registros.map(
+        r => r.fecha
+      )
+    );
 
 
   document
@@ -1740,7 +2387,9 @@ function actualizarResumen(
 
     texto +
     ' • ' +
-    cantidadMovimientos +
+    dias.size +
+    ' día(s) • ' +
+    registros.length +
     ' movimiento(s)';
 
 }
@@ -1748,183 +2397,7 @@ function actualizarResumen(
 
 /*
 =================================================
-ACTUALIZAR CONSULTA
-=================================================
-*/
-
-function actualizarConsulta() {
-
-  const curp =
-    localStorage.getItem(
-      CLAVE_CURP
-    );
-
-
-  const codigo =
-    localStorage.getItem(
-      CLAVE_CODIGO
-    );
-
-
-  if (
-    !curp ||
-    !codigo
-  ) {
-
-    cerrarSesion();
-
-    return;
-
-  }
-
-
-  document
-    .getElementById(
-      'curp'
-    )
-    .value =
-    curp;
-
-
-  document
-    .getElementById(
-      'codigo'
-    )
-    .value =
-    codigo;
-
-
-  consultar(
-    true
-  );
-
-}
-
-
-/*
-=================================================
-CERRAR SESIÓN
-=================================================
-*/
-
-function cerrarSesion() {
-
-  borrarSesion();
-
-
-  historialCompleto =
-    [];
-
-
-  document
-    .getElementById(
-      'curp'
-    )
-    .value =
-    '';
-
-
-  document
-    .getElementById(
-      'codigo'
-    )
-    .value =
-    '';
-
-
-  ocultarError();
-
-  mostrarFormulario();
-
-
-  document
-    .getElementById(
-      'curp'
-    )
-    .focus();
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-
-}
-
-
-function borrarSesion() {
-
-  localStorage.removeItem(
-    CLAVE_CURP
-  );
-
-
-  localStorage.removeItem(
-    CLAVE_CODIGO
-  );
-
-}
-
-
-/*
-=================================================
-PANTALLAS
-=================================================
-*/
-
-function mostrarResultado() {
-
-  document
-    .getElementById(
-      'formulario'
-    )
-    .style
-    .display =
-    'none';
-
-
-  document
-    .getElementById(
-      'resultado'
-    )
-    .style
-    .display =
-    'block';
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-
-}
-
-
-function mostrarFormulario() {
-
-  document
-    .getElementById(
-      'resultado'
-    )
-    .style
-    .display =
-    'none';
-
-
-  document
-    .getElementById(
-      'formulario'
-    )
-    .style
-    .display =
-    'block';
-
-}
-
-
-/*
-=================================================
-ESTADO ACTUAL
+ESTADO
 =================================================
 */
 
@@ -1932,7 +2405,7 @@ function mostrarEstado(
   estado
 ) {
 
-  const contenedor =
+  const div =
     document
       .getElementById(
         'estadoActual'
@@ -1941,7 +2414,7 @@ function mostrarEstado(
 
   const valor =
     String(
-      estado || 'SIN REGISTRO'
+      estado || ''
     )
       .toUpperCase();
 
@@ -1951,11 +2424,11 @@ function mostrarEstado(
     'DENTRO DE LA ESCUELA'
   ) {
 
-    contenedor.className =
+    div.className =
       'estado estadoDentro';
 
 
-    contenedor.innerHTML = `
+    div.innerHTML = `
 
       <div class="estadoTitulo">
         ESTADO ACTUAL
@@ -1975,11 +2448,11 @@ function mostrarEstado(
     'SALIDA REGISTRADA'
   ) {
 
-    contenedor.className =
+    div.className =
       'estado estadoSalida';
 
 
-    contenedor.innerHTML = `
+    div.innerHTML = `
 
       <div class="estadoTitulo">
         ESTADO ACTUAL
@@ -1996,11 +2469,11 @@ function mostrarEstado(
 
   else {
 
-    contenedor.className =
+    div.className =
       'estado estadoSinRegistro';
 
 
-    contenedor.innerHTML = `
+    div.innerHTML = `
 
       <div class="estadoTitulo">
         ESTADO ACTUAL
@@ -2019,167 +2492,260 @@ function mostrarEstado(
 
 /*
 =================================================
-FECHAS
+LLAMADA API JSONP
 =================================================
 */
 
-function convertirFechaRegistro(
-  fecha
+function llamarApi(
+  parametros,
+  callbackResultado
 ) {
 
-  const partes =
-    String(
-      fecha || ''
-    )
-      .split('/');
-
-
-  if (
-    partes.length !== 3
-  ) {
-
-    return null;
-
-  }
-
-
-  return new Date(
-
-    Number(
-      partes[2]
-    ),
-
-    Number(
-      partes[1]
-    ) - 1,
-
-    Number(
-      partes[0]
-    ),
-
-    12,
-    0,
-    0
-
-  );
-
-}
-
-
-function crearFechaLocalISO(
-  valor
-) {
-
-  const partes =
-    String(
-      valor
-    )
-      .split('-');
-
-
-  return new Date(
-
-    Number(
-      partes[0]
-    ),
-
-    Number(
-      partes[1]
-    ) - 1,
-
-    Number(
-      partes[2]
-    ),
-
-    12,
-    0,
-    0
-
-  );
-
-}
-
-
-function inicioDia(
-  fecha
-) {
-
-  const copia =
-    new Date(
-      fecha
+  const callback =
+    'respuesta_' +
+    Date.now() +
+    '_' +
+    Math.floor(
+      Math.random() * 10000
     );
 
 
-  copia.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-
-  return copia;
-
-}
-
-
-function finDia(
-  fecha
-) {
-
-  const copia =
-    new Date(
-      fecha
+  const script =
+    document.createElement(
+      'script'
     );
 
 
-  copia.setHours(
-    23,
-    59,
-    59,
-    999
-  );
+  window[
+    callback
+  ] =
+    function(resultado) {
 
+      try {
 
-  return copia;
-
-}
-
-
-function formatearFechaBonita(
-  fecha
-) {
-
-  const objeto =
-    convertirFechaRegistro(
-      fecha
-    );
-
-
-  if (!objeto) {
-    return fecha;
-  }
-
-
-  return objeto
-    .toLocaleDateString(
-      'es-MX',
-      {
-
-        weekday:
-          'long',
-
-        day:
-          '2-digit',
-
-        month:
-          'long',
-
-        year:
-          'numeric'
+        callbackResultado(
+          resultado
+        );
 
       }
+
+      finally {
+
+        delete window[
+          callback
+        ];
+
+
+        if (
+          script.parentNode
+        ) {
+
+          script.parentNode
+            .removeChild(
+              script
+            );
+
+        }
+
+      }
+
+    };
+
+
+  script.onerror =
+    function() {
+
+      delete window[
+        callback
+      ];
+
+
+      if (
+        script.parentNode
+      ) {
+
+        script.parentNode
+          .removeChild(
+            script
+          );
+
+      }
+
+
+      callbackResultado({
+
+        ok:
+          false,
+
+        mensaje:
+          'No fue posible comunicarse con el sistema.'
+
+      });
+
+    };
+
+
+  parametros.callback =
+    callback;
+
+
+  script.src =
+    URL_API +
+    '?' +
+    new URLSearchParams(
+      parametros
+    )
+      .toString();
+
+
+  document.body
+    .appendChild(
+      script
     );
+
+}
+
+
+/*
+=================================================
+PANTALLAS
+=================================================
+*/
+
+function mostrarPantalla(
+  pantalla
+) {
+
+  document
+    .getElementById(
+      'pantallaLogin'
+    )
+    .classList
+    .toggle(
+      'oculto',
+      pantalla !== 'LOGIN'
+    );
+
+
+  document
+    .getElementById(
+      'pantallaHijos'
+    )
+    .classList
+    .toggle(
+      'oculto',
+      pantalla !== 'HIJOS'
+    );
+
+
+  document
+    .getElementById(
+      'pantallaAlumno'
+    )
+    .classList
+    .toggle(
+      'oculto',
+      pantalla !== 'ALUMNO'
+    );
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+
+}
+
+
+function mostrarLogin() {
+
+  mostrarPantalla(
+    'LOGIN'
+  );
+
+}
+
+
+function mostrarProcesando(
+  mostrar
+) {
+
+  document
+    .getElementById(
+      'procesandoLogin'
+    )
+    .style
+    .display =
+    mostrar
+      ? 'block'
+      : 'none';
+
+}
+
+
+/*
+=================================================
+CERRAR SESIÓN
+=================================================
+*/
+
+function cerrarSesion() {
+
+  borrarSesion();
+
+
+  historialCompleto =
+    [];
+
+
+  curpAlumnoActual =
+    '';
+
+
+  document
+    .querySelectorAll(
+      'input'
+    )
+    .forEach(
+      input =>
+        input.value = ''
+    );
+
+
+  ocultarError();
+
+
+  cambiarTipoAcceso(
+    'TUTOR'
+  );
+
+
+  mostrarLogin();
+
+}
+
+
+function borrarSesion() {
+
+  localStorage.removeItem(
+    CLAVE_TIPO
+  );
+
+  localStorage.removeItem(
+    CLAVE_ID_TUTOR
+  );
+
+  localStorage.removeItem(
+    CLAVE_CODIGO_TUTOR
+  );
+
+  localStorage.removeItem(
+    CLAVE_CURP_ALUMNO
+  );
+
+  localStorage.removeItem(
+    CLAVE_CODIGO_ALUMNO
+  );
 
 }
 
@@ -2197,7 +2763,7 @@ function mostrarError(
   const div =
     document
       .getElementById(
-        'error'
+        'errorLogin'
       );
 
 
@@ -2215,11 +2781,142 @@ function ocultarError() {
 
   document
     .getElementById(
-      'error'
+      'errorLogin'
     )
     .style
     .display =
     'none';
+
+}
+
+
+/*
+=================================================
+FECHAS
+=================================================
+*/
+
+function convertirFechaRegistro(
+  fecha
+) {
+
+  const p =
+    String(
+      fecha || ''
+    )
+      .split('/');
+
+
+  if (
+    p.length !== 3
+  ) {
+    return null;
+  }
+
+
+  return new Date(
+    Number(p[2]),
+    Number(p[1]) - 1,
+    Number(p[0]),
+    12,
+    0,
+    0
+  );
+
+}
+
+
+function crearFechaLocalISO(
+  valor
+) {
+
+  const p =
+    valor.split('-');
+
+
+  return new Date(
+    Number(p[0]),
+    Number(p[1]) - 1,
+    Number(p[2]),
+    12,
+    0,
+    0
+  );
+
+}
+
+
+function inicioDia(
+  fecha
+) {
+
+  const f =
+    new Date(
+      fecha
+    );
+
+
+  f.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  return f;
+
+}
+
+
+function finDia(
+  fecha
+) {
+
+  const f =
+    new Date(
+      fecha
+    );
+
+
+  f.setHours(
+    23,
+    59,
+    59,
+    999
+  );
+
+
+  return f;
+
+}
+
+
+function formatearFechaBonita(
+  fecha
+) {
+
+  const f =
+    convertirFechaRegistro(
+      fecha
+    );
+
+
+  if (!f) {
+    return fecha;
+  }
+
+
+  return f
+    .toLocaleDateString(
+      'es-MX',
+      {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }
+    );
 
 }
 
@@ -2268,6 +2965,25 @@ function escapar(
 }
 
 
+function escaparJs(
+  valor
+) {
+
+  return String(
+    valor || ''
+  )
+    .replace(
+      /\\/g,
+      '\\\\'
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    );
+
+}
+
+
 /*
 =================================================
 ENTER
@@ -2276,21 +2992,17 @@ ENTER
 
 document
   .getElementById(
-    'curp'
+    'codigoTutor'
   )
   .addEventListener(
     'keydown',
-    function(event) {
+    function(e) {
 
       if (
-        event.key === 'Enter'
+        e.key === 'Enter'
       ) {
 
-        document
-          .getElementById(
-            'codigo'
-          )
-          .focus();
+        consultarTutor();
 
       }
 
@@ -2300,17 +3012,17 @@ document
 
 document
   .getElementById(
-    'codigo'
+    'codigoAlumno'
   )
   .addEventListener(
     'keydown',
-    function(event) {
+    function(e) {
 
       if (
-        event.key === 'Enter'
+        e.key === 'Enter'
       ) {
 
-        consultar();
+        consultarAlumnoIndividual();
 
       }
 
