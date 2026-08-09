@@ -28,7 +28,7 @@ body {
 }
 
 .app {
-  max-width: 520px;
+  max-width: 540px;
   margin: auto;
   min-height: 100vh;
   background: #ffffff;
@@ -72,23 +72,26 @@ label {
   font-weight: bold;
 }
 
-input {
+input,
+select {
   width: 100%;
-  padding: 14px;
-  margin-bottom: 15px;
+  padding: 13px;
   border: 2px solid #d1d5db;
   border-radius: 10px;
-  font-size: 17px;
+  font-size: 16px;
+  background: white;
   outline: none;
 }
 
-input:focus {
+input:focus,
+select:focus {
   border-color: #2563eb;
 }
 
 #curp,
 #codigo {
   text-transform: uppercase;
+  margin-bottom: 15px;
 }
 
 .btnConsultar {
@@ -129,6 +132,16 @@ input:focus {
 
 #resultado {
   display: none;
+}
+
+.sesionInfo {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #eff6ff;
+  border-radius: 9px;
+  text-align: center;
+  color: #1e40af;
+  font-size: 13px;
 }
 
 .alumnoNombre {
@@ -181,7 +194,7 @@ input:focus {
   font-weight: bold;
 }
 
-.hoyTitulo {
+.seccionTitulo {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 14px;
@@ -213,51 +226,119 @@ input:focus {
   font-weight: bold;
 }
 
-.historialTitulo {
-  font-size: 18px;
+.filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btnFiltro {
+  padding: 11px 6px;
+  border: 2px solid #d1d5db;
+  border-radius: 9px;
+  background: white;
+  color: #374151;
+  font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
+}
+
+.btnFiltro.activo {
+  background: #173b65;
+  border-color: #173b65;
+  color: white;
+}
+
+.rangoPersonalizado {
+  display: none;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.campoFecha {
   margin-bottom: 12px;
 }
 
-.tablaContenedor {
-  overflow-x: auto;
-}
-
-table {
+.btnAplicar {
   width: 100%;
-  border-collapse: collapse;
+  padding: 12px;
+  border: none;
+  border-radius: 9px;
+  background: #166534;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-th,
-td {
-  padding: 11px 8px;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: left;
-  font-size: 14px;
-}
-
-th {
+.resumenFiltro {
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 8px;
   background: #f8fafc;
+  text-align: center;
+  color: #4b5563;
+  font-size: 13px;
+}
+
+.diaCard {
+  margin-bottom: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.diaFecha {
+  padding: 10px 12px;
+  background: #f1f5f9;
+  font-size: 15px;
   font-weight: bold;
 }
 
-.movEntrada {
+.diaMovimientos {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+}
+
+.diaMovimiento {
+  flex: 1;
+  padding: 11px 6px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.diaEntrada {
+  background: #f0fdf4;
   color: #166534;
+}
+
+.diaSalida {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.diaTipo {
+  font-size: 12px;
   font-weight: bold;
 }
 
-.movSalida {
-  color: #1e40af;
+.diaHora {
+  margin-top: 5px;
+  font-size: 18px;
   font-weight: bold;
 }
 
 .sinRegistros {
   text-align: center;
   color: #6b7280;
-  padding: 18px;
+  padding: 22px;
 }
 
-.btnNuevaConsulta,
+.btnActualizar,
 .btnCerrarSesion {
   width: 100%;
   margin-top: 10px;
@@ -268,7 +349,7 @@ th {
   cursor: pointer;
 }
 
-.btnNuevaConsulta {
+.btnActualizar {
   border: 2px solid #173b65;
   background: white;
   color: #173b65;
@@ -288,14 +369,12 @@ th {
   color: #6b7280;
 }
 
-.sesionInfo {
-  margin-bottom: 12px;
-  padding: 10px;
-  background: #eff6ff;
-  border-radius: 9px;
-  text-align: center;
-  color: #1e40af;
-  font-size: 13px;
+@media (max-width: 380px) {
+
+  .filtros {
+    grid-template-columns: 1fr;
+  }
+
 }
 
 </style>
@@ -318,6 +397,7 @@ th {
 
   </div>
 
+
   <div class="contenido">
 
     <div
@@ -335,6 +415,7 @@ th {
         autocomplete="off"
         placeholder="Ingrese la CURP">
 
+
       <label for="codigo">
         CÓDIGO
       </label>
@@ -346,6 +427,7 @@ th {
         autocomplete="off"
         placeholder="Ingrese el código">
 
+
       <button
         id="btnConsultar"
         class="btnConsultar"
@@ -355,11 +437,14 @@ th {
 
       </button>
 
+
       <div id="procesando">
         Consultando información...
       </div>
 
+
       <div id="error"></div>
+
 
       <div class="aviso">
         Si el acceso es correcto, este dispositivo
@@ -371,9 +456,7 @@ th {
 
     <div id="resultado">
 
-      <div
-        id="sesionInfo"
-        class="sesionInfo">
+      <div class="sesionInfo">
         Acceso guardado en este dispositivo.
       </div>
 
@@ -400,7 +483,7 @@ th {
 
       <div class="card">
 
-        <div class="hoyTitulo">
+        <div class="seccionTitulo">
           REGISTRO DE HOY
         </div>
 
@@ -412,6 +495,7 @@ th {
             color:#6b7280;
           ">
         </div>
+
 
         <div class="movimientosHoy">
 
@@ -428,6 +512,7 @@ th {
             </div>
 
           </div>
+
 
           <div class="movimientoHoy">
 
@@ -450,20 +535,113 @@ th {
 
       <div class="card">
 
-        <div class="historialTitulo">
-          HISTORIAL RECIENTE
+        <div class="seccionTitulo">
+          HISTORIAL
         </div>
+
+
+        <div class="filtros">
+
+          <button
+            id="filtroHoy"
+            class="btnFiltro"
+            onclick="seleccionarFiltro('HOY')">
+
+            HOY
+
+          </button>
+
+
+          <button
+            id="filtro7"
+            class="btnFiltro activo"
+            onclick="seleccionarFiltro('7')">
+
+            ÚLTIMOS 7 DÍAS
+
+          </button>
+
+
+          <button
+            id="filtro30"
+            class="btnFiltro"
+            onclick="seleccionarFiltro('30')">
+
+            ÚLTIMOS 30 DÍAS
+
+          </button>
+
+
+          <button
+            id="filtroRango"
+            class="btnFiltro"
+            onclick="seleccionarFiltro('RANGO')">
+
+            RANGO DE FECHAS
+
+          </button>
+
+        </div>
+
+
+        <div
+          id="rangoPersonalizado"
+          class="rangoPersonalizado">
+
+
+          <div class="campoFecha">
+
+            <label for="fechaInicio">
+              FECHA INICIAL
+            </label>
+
+            <input
+              id="fechaInicio"
+              type="date">
+
+          </div>
+
+
+          <div class="campoFecha">
+
+            <label for="fechaFin">
+              FECHA FINAL
+            </label>
+
+            <input
+              id="fechaFin"
+              type="date">
+
+          </div>
+
+
+          <button
+            class="btnAplicar"
+            onclick="aplicarRango()">
+
+            APLICAR RANGO
+
+          </button>
+
+        </div>
+
+
+        <div
+          id="resumenFiltro"
+          class="resumenFiltro">
+        </div>
+
 
         <div
           id="historial"
-          class="tablaContenedor">
+          style="margin-top:14px;">
         </div>
 
       </div>
 
 
       <button
-        class="btnNuevaConsulta"
+        class="btnActualizar"
         onclick="actualizarConsulta()">
 
         ACTUALIZAR REGISTROS
@@ -495,14 +673,8 @@ PEGA AQUÍ TU URL /exec ACTUAL DE APPS SCRIPT
 */
 
 const URL_API =
-  'https://script.google.com/macros/s/AKfycbxeeSfxFcOKTFAbm8HMa8fGm_xpCAafd_HDfChpsBkiDoQbNMwG80ZjT0u1Ck1J4R1O/exec';
+  'PEGA_AQUI_TU_URL_DE_APPS_SCRIPT';
 
-
-/*
-=================================================
-NOMBRES USADOS EN LOCALSTORAGE
-=================================================
-*/
 
 const CLAVE_CURP =
   'control_escolar_curp';
@@ -514,11 +686,16 @@ const CLAVE_CODIGO =
 let consultando =
   false;
 
+let historialCompleto =
+  [];
+
+let filtroActual =
+  '7';
+
 
 /*
 =================================================
-AL CARGAR LA PÁGINA
-INTENTAR RECUPERAR SESIÓN
+RECUPERAR SESIÓN
 =================================================
 */
 
@@ -530,7 +707,6 @@ window.addEventListener(
       localStorage.getItem(
         CLAVE_CURP
       );
-
 
     const codigoGuardado =
       localStorage.getItem(
@@ -544,24 +720,18 @@ window.addEventListener(
     ) {
 
       document
-        .getElementById(
-          'curp'
-        )
+        .getElementById('curp')
         .value =
         curpGuardada;
 
 
       document
-        .getElementById(
-          'codigo'
-        )
+        .getElementById('codigo')
         .value =
         codigoGuardado;
 
 
-      consultar(
-        true
-      );
+      consultar(true);
 
     }
 
@@ -587,9 +757,7 @@ function consultar(
   const curp =
     limpiarTexto(
       document
-        .getElementById(
-          'curp'
-        )
+        .getElementById('curp')
         .value
     );
 
@@ -597,9 +765,7 @@ function consultar(
   const codigo =
     limpiarTexto(
       document
-        .getElementById(
-          'codigo'
-        )
+        .getElementById('codigo')
         .value
     );
 
@@ -644,7 +810,7 @@ function consultar(
   ) {
 
     mostrarError(
-      'La página todavía no tiene configurada la URL de Apps Script.'
+      'La página no tiene configurada la URL de Apps Script.'
     );
 
     return;
@@ -656,21 +822,14 @@ function consultar(
     true;
 
 
-  const boton =
-    document
-      .getElementById(
-        'btnConsultar'
-      );
-
-
-  boton.disabled =
+  document
+    .getElementById('btnConsultar')
+    .disabled =
     true;
 
 
   document
-    .getElementById(
-      'procesando'
-    )
+    .getElementById('procesando')
     .style
     .display =
     'block';
@@ -687,7 +846,7 @@ function consultar(
 
 /*
 =================================================
-ENVÍA CONSULTA A APPS SCRIPT
+ENVIAR CONSULTA
 =================================================
 */
 
@@ -718,7 +877,6 @@ function enviarConsulta(
         ];
 
       }
-
       catch (e) {}
 
 
@@ -747,17 +905,13 @@ function enviarConsulta(
 
 
       document
-        .getElementById(
-          'btnConsultar'
-        )
+        .getElementById('btnConsultar')
         .disabled =
         false;
 
 
       document
-        .getElementById(
-          'procesando'
-        )
+        .getElementById('procesando')
         .style
         .display =
         'none';
@@ -778,23 +932,18 @@ function enviarConsulta(
 
       limpiar();
 
-
       consultando =
         false;
 
 
       document
-        .getElementById(
-          'btnConsultar'
-        )
+        .getElementById('btnConsultar')
         .disabled =
         false;
 
 
       document
-        .getElementById(
-          'procesando'
-        )
+        .getElementById('procesando')
         .style
         .display =
         'none';
@@ -857,11 +1006,6 @@ function procesarConsulta(
     !resultado.ok
   ) {
 
-    /*
-    Si la sesión guardada ya no es válida,
-    eliminarla automáticamente.
-    */
-
     if (
       consultaAutomatica
     ) {
@@ -886,13 +1030,6 @@ function procesarConsulta(
 
   }
 
-
-  /*
-  ===============================================
-  GUARDAR SESIÓN SOLO DESPUÉS
-  DE UNA AUTENTICACIÓN CORRECTA
-  ===============================================
-  */
 
   localStorage.setItem(
     CLAVE_CURP,
@@ -989,9 +1126,11 @@ function procesarConsulta(
       : '--';
 
 
-  mostrarHistorial(
-    resultado.historial || []
-  );
+  historialCompleto =
+    resultado.historial || [];
+
+
+  aplicarFiltroActual();
 
 
   mostrarResultado();
@@ -1001,7 +1140,615 @@ function procesarConsulta(
 
 /*
 =================================================
-ACTUALIZAR SIN CERRAR SESIÓN
+FILTROS
+=================================================
+*/
+
+function seleccionarFiltro(
+  filtro
+) {
+
+  filtroActual =
+    filtro;
+
+
+  document
+    .querySelectorAll(
+      '.btnFiltro'
+    )
+    .forEach(
+      boton =>
+        boton.classList.remove(
+          'activo'
+        )
+    );
+
+
+  const mapa = {
+
+    HOY:
+      'filtroHoy',
+
+    '7':
+      'filtro7',
+
+    '30':
+      'filtro30',
+
+    RANGO:
+      'filtroRango'
+
+  };
+
+
+  document
+    .getElementById(
+      mapa[filtro]
+    )
+    .classList
+    .add(
+      'activo'
+    );
+
+
+  const rango =
+    document
+      .getElementById(
+        'rangoPersonalizado'
+      );
+
+
+  if (
+    filtro === 'RANGO'
+  ) {
+
+    rango.style.display =
+      'block';
+
+  }
+
+  else {
+
+    rango.style.display =
+      'none';
+
+    aplicarFiltroActual();
+
+  }
+
+}
+
+
+function aplicarFiltroActual() {
+
+  if (
+    filtroActual === 'RANGO'
+  ) {
+
+    aplicarRango();
+
+    return;
+
+  }
+
+
+  const hoy =
+    inicioDia(
+      new Date()
+    );
+
+
+  let fechaDesde;
+  let fechaHasta =
+    finDia(
+      new Date()
+    );
+
+
+  if (
+    filtroActual === 'HOY'
+  ) {
+
+    fechaDesde =
+      hoy;
+
+  }
+
+
+  else if (
+    filtroActual === '7'
+  ) {
+
+    fechaDesde =
+      new Date(
+        hoy
+      );
+
+    fechaDesde.setDate(
+      fechaDesde.getDate() - 6
+    );
+
+  }
+
+
+  else {
+
+    fechaDesde =
+      new Date(
+        hoy
+      );
+
+    fechaDesde.setDate(
+      fechaDesde.getDate() - 29
+    );
+
+  }
+
+
+  const filtrados =
+    filtrarHistorial(
+      fechaDesde,
+      fechaHasta
+    );
+
+
+  mostrarHistorialAgrupado(
+    filtrados
+  );
+
+
+  let texto =
+    '';
+
+
+  if (
+    filtroActual === 'HOY'
+  ) {
+
+    texto =
+      'Mostrando registros de hoy';
+
+  }
+
+  else if (
+    filtroActual === '7'
+  ) {
+
+    texto =
+      'Mostrando los últimos 7 días';
+
+  }
+
+  else {
+
+    texto =
+      'Mostrando los últimos 30 días';
+
+  }
+
+
+  actualizarResumen(
+    texto,
+    filtrados.length
+  );
+
+}
+
+
+function aplicarRango() {
+
+  const inicio =
+    document
+      .getElementById(
+        'fechaInicio'
+      )
+      .value;
+
+
+  const fin =
+    document
+      .getElementById(
+        'fechaFin'
+      )
+      .value;
+
+
+  if (
+    !inicio ||
+    !fin
+  ) {
+
+    document
+      .getElementById(
+        'resumenFiltro'
+      )
+      .textContent =
+      'Selecciona la fecha inicial y final.';
+
+    return;
+
+  }
+
+
+  let fechaDesde =
+    crearFechaLocalISO(
+      inicio
+    );
+
+
+  let fechaHasta =
+    crearFechaLocalISO(
+      fin
+    );
+
+
+  if (
+    fechaDesde >
+    fechaHasta
+  ) {
+
+    document
+      .getElementById(
+        'resumenFiltro'
+      )
+      .textContent =
+      'La fecha inicial no puede ser posterior a la fecha final.';
+
+    return;
+
+  }
+
+
+  fechaDesde =
+    inicioDia(
+      fechaDesde
+    );
+
+
+  fechaHasta =
+    finDia(
+      fechaHasta
+    );
+
+
+  const filtrados =
+    filtrarHistorial(
+      fechaDesde,
+      fechaHasta
+    );
+
+
+  mostrarHistorialAgrupado(
+    filtrados
+  );
+
+
+  actualizarResumen(
+    'Rango seleccionado',
+    filtrados.length
+  );
+
+}
+
+
+function filtrarHistorial(
+  desde,
+  hasta
+) {
+
+  return historialCompleto.filter(
+    registro => {
+
+      const fecha =
+        convertirFechaRegistro(
+          registro.fecha
+        );
+
+
+      if (!fecha) {
+        return false;
+      }
+
+
+      return (
+        fecha >= desde &&
+        fecha <= hasta
+      );
+
+    }
+  );
+
+}
+
+
+/*
+=================================================
+MOSTRAR HISTORIAL POR DÍA
+=================================================
+*/
+
+function mostrarHistorialAgrupado(
+  registros
+) {
+
+  const contenedor =
+    document
+      .getElementById(
+        'historial'
+      );
+
+
+  if (
+    !registros ||
+    registros.length === 0
+  ) {
+
+    contenedor.innerHTML = `
+
+      <div class="sinRegistros">
+
+        No existen registros
+        en el periodo seleccionado.
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const dias =
+    {};
+
+
+  registros.forEach(
+    registro => {
+
+      if (
+        !dias[
+          registro.fecha
+        ]
+      ) {
+
+        dias[
+          registro.fecha
+        ] = {
+
+          entrada:
+            null,
+
+          salida:
+            null
+
+        };
+
+      }
+
+
+      const movimiento =
+        String(
+          registro.movimiento || ''
+        )
+          .toUpperCase();
+
+
+      if (
+        movimiento ===
+        'ENTRADA'
+      ) {
+
+        /*
+        Como los registros vienen
+        de reciente a antiguo,
+        conservamos la entrada más antigua
+        de ese día.
+        */
+
+        dias[
+          registro.fecha
+        ].entrada =
+          registro.hora;
+
+      }
+
+
+      if (
+        movimiento ===
+        'SALIDA' &&
+        !dias[
+          registro.fecha
+        ].salida
+      ) {
+
+        /*
+        Conservamos la salida
+        más reciente del día.
+        */
+
+        dias[
+          registro.fecha
+        ].salida =
+          registro.hora;
+
+      }
+
+    }
+  );
+
+
+  const fechas =
+    Object.keys(
+      dias
+    );
+
+
+  fechas.sort(
+    function(a, b) {
+
+      return (
+        convertirFechaRegistro(b) -
+        convertirFechaRegistro(a)
+      );
+
+    }
+  );
+
+
+  let html =
+    '';
+
+
+  fechas.forEach(
+    fecha => {
+
+      const dia =
+        dias[
+          fecha
+        ];
+
+
+      html += `
+
+        <div class="diaCard">
+
+          <div class="diaFecha">
+
+            ${escapar(
+              formatearFechaBonita(
+                fecha
+              )
+            )}
+
+          </div>
+
+
+          <div class="diaMovimientos">
+
+            <div
+              class="
+                diaMovimiento
+                diaEntrada
+              ">
+
+              <div class="diaTipo">
+                ENTRADA
+              </div>
+
+              <div class="diaHora">
+
+                ${
+                  dia.entrada
+                    ? escapar(
+                        dia.entrada
+                      )
+                    : '--'
+                }
+
+              </div>
+
+            </div>
+
+
+            <div
+              class="
+                diaMovimiento
+                diaSalida
+              ">
+
+              <div class="diaTipo">
+                SALIDA
+              </div>
+
+              <div class="diaHora">
+
+                ${
+                  dia.salida
+                    ? escapar(
+                        dia.salida
+                      )
+                    : '--'
+                }
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  contenedor.innerHTML =
+    html;
+
+}
+
+
+/*
+=================================================
+RESUMEN DEL FILTRO
+=================================================
+*/
+
+function actualizarResumen(
+  texto,
+  cantidadMovimientos
+) {
+
+  const dias =
+    new Set();
+
+
+  let entradas =
+    0;
+
+  let salidas =
+    0;
+
+
+  const filtroVisible =
+    document
+      .querySelectorAll(
+        '.diaCard'
+      );
+
+
+  historialCompleto.forEach(
+    registro => {
+
+      /*
+      El conteo detallado no es crítico
+      para el funcionamiento.
+      */
+
+    }
+  );
+
+
+  document
+    .getElementById(
+      'resumenFiltro'
+    )
+    .textContent =
+
+    texto +
+    ' • ' +
+    cantidadMovimientos +
+    ' movimiento(s)';
+
+}
+
+
+/*
+=================================================
+ACTUALIZAR CONSULTA
 =================================================
 */
 
@@ -1065,6 +1812,10 @@ function cerrarSesion() {
   borrarSesion();
 
 
+  historialCompleto =
+    [];
+
+
   document
     .getElementById(
       'curp'
@@ -1082,7 +1833,6 @@ function cerrarSesion() {
 
 
   ocultarError();
-
 
   mostrarFormulario();
 
@@ -1118,7 +1868,7 @@ function borrarSesion() {
 
 /*
 =================================================
-MOSTRAR PANTALLAS
+PANTALLAS
 =================================================
 */
 
@@ -1269,123 +2019,167 @@ function mostrarEstado(
 
 /*
 =================================================
-HISTORIAL
+FECHAS
 =================================================
 */
 
-function mostrarHistorial(
-  registros
+function convertirFechaRegistro(
+  fecha
 ) {
 
-  const contenedor =
-    document
-      .getElementById(
-        'historial'
-      );
+  const partes =
+    String(
+      fecha || ''
+    )
+      .split('/');
 
 
   if (
-    !registros ||
-    registros.length === 0
+    partes.length !== 3
   ) {
 
-    contenedor.innerHTML = `
-
-      <div class="sinRegistros">
-
-        No existen registros
-        de entrada o salida
-        para este alumno.
-
-      </div>
-
-    `;
-
-    return;
+    return null;
 
   }
 
 
-  let html = `
+  return new Date(
 
-    <table>
+    Number(
+      partes[2]
+    ),
 
-      <thead>
+    Number(
+      partes[1]
+    ) - 1,
 
-        <tr>
+    Number(
+      partes[0]
+    ),
 
-          <th>FECHA</th>
+    12,
+    0,
+    0
 
-          <th>HORA</th>
+  );
 
-          <th>MOVIMIENTO</th>
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-  `;
-
-
-  registros.forEach(
-    registro => {
-
-      const movimiento =
-        String(
-          registro.movimiento || ''
-        )
-          .toUpperCase();
+}
 
 
-      const clase =
-        movimiento === 'ENTRADA'
-          ? 'movEntrada'
-          : 'movSalida';
+function crearFechaLocalISO(
+  valor
+) {
+
+  const partes =
+    String(
+      valor
+    )
+      .split('-');
 
 
-      html += `
+  return new Date(
 
-        <tr>
+    Number(
+      partes[0]
+    ),
 
-          <td>
-            ${escapar(
-              registro.fecha
-            )}
-          </td>
+    Number(
+      partes[1]
+    ) - 1,
 
-          <td>
-            ${escapar(
-              registro.hora
-            )}
-          </td>
+    Number(
+      partes[2]
+    ),
 
-          <td class="${clase}">
-            ${escapar(
-              movimiento
-            )}
-          </td>
+    12,
+    0,
+    0
 
-        </tr>
+  );
 
-      `;
+}
 
-    }
+
+function inicioDia(
+  fecha
+) {
+
+  const copia =
+    new Date(
+      fecha
+    );
+
+
+  copia.setHours(
+    0,
+    0,
+    0,
+    0
   );
 
 
-  html += `
+  return copia;
 
-      </tbody>
-
-    </table>
-
-  `;
+}
 
 
-  contenedor.innerHTML =
-    html;
+function finDia(
+  fecha
+) {
+
+  const copia =
+    new Date(
+      fecha
+    );
+
+
+  copia.setHours(
+    23,
+    59,
+    59,
+    999
+  );
+
+
+  return copia;
+
+}
+
+
+function formatearFechaBonita(
+  fecha
+) {
+
+  const objeto =
+    convertirFechaRegistro(
+      fecha
+    );
+
+
+  if (!objeto) {
+    return fecha;
+  }
+
+
+  return objeto
+    .toLocaleDateString(
+      'es-MX',
+      {
+
+        weekday:
+          'long',
+
+        day:
+          '2-digit',
+
+        month:
+          'long',
+
+        year:
+          'numeric'
+
+      }
+    );
 
 }
 
@@ -1458,10 +2252,9 @@ function escapar(
 ) {
 
   const div =
-    document
-      .createElement(
-        'div'
-      );
+    document.createElement(
+      'div'
+    );
 
 
   div.textContent =
@@ -1477,7 +2270,7 @@ function escapar(
 
 /*
 =================================================
-ENTER EN LOS CAMPOS
+ENTER
 =================================================
 */
 
