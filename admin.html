@@ -356,6 +356,24 @@ tbody tr:hover {
   background: #f8fafc;
 }
 
+.filaIncompleta {
+  background: #fee2e2 !important;
+}
+.filaIncompleta td {
+  color: #991b1b;
+  font-weight: bold;
+}
+.filaIncompleta:hover {
+  background: #fecaca !important;
+}
+.alertaIncompleta {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #b91c1c;
+  font-weight: bold;
+}
+
 .estadoDentro {
   color: #166534;
   font-weight: bold;
@@ -2179,12 +2197,13 @@ function pintarTabla(
 
         html += `
 
-          <tr>
+          <tr class="${alumno.registroIncompleto ? 'filaIncompleta' : ''}">
 
             <td>
               ${escapar(
                 alumno.nombre
               )}
+              ${alumno.registroIncompleto ? '<span class="alertaIncompleta">REGISTRO INCOMPLETO</span>' : ''}
             </td>
 
             <td>
@@ -2265,12 +2284,17 @@ function pintarTabla(
 
         html += `
 
-          <tr>
+          <tr class="${alumno.registroIncompleto ? 'filaIncompleta' : ''}">
 
             <td>
               ${escapar(
                 alumno.nombre
               )}
+              ${alumno.registroIncompleto
+                ? '<span class="alertaIncompleta">REGISTRO INCOMPLETO' +
+                  (alumno.diasIncompletos ? ' · ' + alumno.diasIncompletos + ' DÍA(S)' : '') +
+                  '</span>'
+                : ''}
             </td>
 
             <td>
@@ -2462,9 +2486,9 @@ function abrirModalHistorial(
 
   const nombre =
     [
-      alumno.nombre,
       alumno.primerApellido,
-      alumno.segundoApellido
+      alumno.segundoApellido,
+      alumno.nombre
     ]
       .filter(Boolean)
       .join(' ');
