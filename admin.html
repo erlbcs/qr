@@ -374,6 +374,11 @@ tbody tr:hover {
   font-weight: bold;
 }
 
+.nombreIncompleto {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+
 .estadoDentro {
   color: #166534;
   font-weight: bold;
@@ -2195,15 +2200,33 @@ function pintarTabla(
         }
 
 
+        /*
+        El registro de HOY se considera incompleto
+        si falta ENTRADA o falta SALIDA.
+        Se calcula aquí para no depender únicamente
+        del valor enviado por Apps Script.
+        */
+        const incompletoHoy =
+          !alumno.entrada ||
+          !alumno.salida;
+
+
         html += `
 
-          <tr class="${alumno.registroIncompleto ? 'filaIncompleta' : ''}">
+          <tr class="${incompletoHoy ? 'filaIncompleta' : ''}">
 
             <td>
-              ${escapar(
-                alumno.nombre
-              )}
-              ${alumno.registroIncompleto ? '<span class="alertaIncompleta">REGISTRO INCOMPLETO</span>' : ''}
+              <span class="${incompletoHoy ? 'nombreIncompleto' : ''}">
+                ${escapar(
+                  alumno.nombre
+                )}
+              </span>
+
+              ${
+                incompletoHoy
+                  ? '<span class="alertaIncompleta">REGISTRO INCOMPLETO</span>'
+                  : ''
+              }
             </td>
 
             <td>
@@ -2282,19 +2305,42 @@ function pintarTabla(
             : '--';
 
 
+        /*
+        Para periodos usamos el indicador detallado
+        de Apps Script. Como respaldo, si el total de
+        entradas y salidas no coincide, también se
+        considera incompleto.
+        */
+        const incompletoPeriodo =
+          Boolean(
+            alumno.registroIncompleto
+          ) ||
+          Number(
+            alumno.entradas || 0
+          ) !==
+          Number(
+            alumno.salidas || 0
+          );
+
+
         html += `
 
-          <tr class="${alumno.registroIncompleto ? 'filaIncompleta' : ''}">
+          <tr class="${incompletoPeriodo ? 'filaIncompleta' : ''}">
 
             <td>
-              ${escapar(
-                alumno.nombre
-              )}
-              ${alumno.registroIncompleto
-                ? '<span class="alertaIncompleta">REGISTRO INCOMPLETO' +
-                  (alumno.diasIncompletos ? ' · ' + alumno.diasIncompletos + ' DÍA(S)' : '') +
-                  '</span>'
-                : ''}
+              <span class="${incompletoPeriodo ? 'nombreIncompleto' : ''}">
+                ${escapar(
+                  alumno.nombre
+                )}
+              </span>
+
+              ${
+                incompletoPeriodo
+                  ? '<span class="alertaIncompleta">REGISTRO INCOMPLETO' +
+                    (alumno.diasIncompletos ? ' · ' + alumno.diasIncompletos + ' DÍA(S)' : '') +
+                    '</span>'
+                  : ''
+              }
             </td>
 
             <td>
