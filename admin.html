@@ -1223,6 +1223,10 @@ let periodoEsHoy =
   true;
 
 
+let periodoEsUnDia =
+  true;
+
+
 /*
 =================================================
 INICIO
@@ -1856,6 +1860,12 @@ function pintarPanel(
     !!periodo.esHoy;
 
 
+  periodoEsUnDia =
+    Boolean(
+      periodo.esUnDia
+    );
+
+
   document
     .getElementById(
       'fechaPanel'
@@ -2242,6 +2252,7 @@ function pintarTabla(
         del valor enviado por Apps Script.
         */
         const incompletoHoy =
+          periodoEsUnDia &&
           Boolean(
             alumno.registroIncompleto
           );
@@ -2348,6 +2359,7 @@ function pintarTabla(
         considera incompleto.
         */
         const incompletoPeriodo =
+          periodoEsUnDia &&
           Boolean(
             alumno.registroIncompleto
           );
