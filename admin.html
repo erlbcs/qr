@@ -781,21 +781,21 @@ tbody tr:hover {
 
 
           <button
-            id="periodo7"
+            id="periodoSemana"
             class="btnPeriodo"
-            onclick="seleccionarPeriodoRapido('7')">
+            onclick="seleccionarPeriodoRapido('SEMANA')">
 
-            ÚLTIMOS 7 DÍAS
+            SEMANA ACTUAL
 
           </button>
 
 
           <button
-            id="periodo30"
+            id="periodoMes"
             class="btnPeriodo"
-            onclick="seleccionarPeriodoRapido('30')">
+            onclick="seleccionarPeriodoRapido('MES')">
 
-            ÚLTIMOS 30 DÍAS
+            MES ACTUAL
 
           </button>
 
@@ -1508,23 +1508,37 @@ function seleccionarPeriodoRapido(
 
 
   if (
-    tipo === '7'
+    tipo === 'SEMANA'
   ) {
 
+    const diaSemana =
+      hoy.getDay();
+
+
+    const desplazamiento =
+      diaSemana === 0
+        ? 6
+        : diaSemana - 1;
+
+
     inicio.setDate(
-      inicio.getDate() - 6
+      inicio.getDate() -
+      desplazamiento
     );
 
   }
 
 
   else if (
-    tipo === '30'
+    tipo === 'MES'
   ) {
 
-    inicio.setDate(
-      inicio.getDate() - 29
-    );
+    inicio =
+      new Date(
+        hoy.getFullYear(),
+        hoy.getMonth(),
+        1
+      );
 
   }
 
@@ -1634,8 +1648,8 @@ function marcarBotonPeriodo(
 
   const mapa = {
     HOY: 'periodoHoy',
-    '7': 'periodo7',
-    '30': 'periodo30'
+    SEMANA: 'periodoSemana',
+    MES: 'periodoMes'
   };
 
 
@@ -1858,16 +1872,21 @@ function pintarPanel(
       'periodoActual'
     )
     .textContent =
-    periodoEsHoy
-      ? 'Periodo: HOY · ' +
-        (periodo.inicio || '')
-      : 'Periodo: ' +
-        (periodo.inicio || '') +
-        ' al ' +
-        (periodo.fin || '') +
-        ' · ' +
-        (periodo.diasCalendario || 0) +
-        ' día(s) calendario';
+    (
+      periodoEsHoy
+        ? 'Periodo: HOY · ' +
+          (periodo.inicio || '')
+        : 'Periodo: ' +
+          (periodo.inicio || '') +
+          ' al ' +
+          (periodo.fin || '')
+    ) +
+    ' · Días hábiles: ' +
+    (periodo.diasHabiles ?? 0) +
+    ' · Días inhábiles/festivos: ' +
+    (periodo.diasInhabiles ?? 0) +
+    ' · Fin de semana: ' +
+    (periodo.finesSemana ?? 0);
 
 
   if (
@@ -1933,11 +1952,27 @@ function pintarPanel(
     );
 
 
-    configurarTarjeta(
-      5,
-      resumen.sinRegistro,
-      'SIN REGISTRO HOY'
-    );
+    if (
+      periodo.hoyEsHabil === false
+    ) {
+
+      configurarTarjeta(
+        5,
+        '—',
+        'DÍA INHÁBIL'
+      );
+
+    }
+
+    else {
+
+      configurarTarjeta(
+        5,
+        resumen.sinRegistro,
+        'SIN REGISTRO HOY'
+      );
+
+    }
 
   }
 
@@ -1966,8 +2001,8 @@ function pintarPanel(
 
     configurarTarjeta(
       4,
-      resumen.diasActividad,
-      'DÍAS CON ACTIVIDAD'
+      resumen.diasHabiles,
+      'DÍAS HÁBILES'
     );
 
 
@@ -2207,8 +2242,9 @@ function pintarTabla(
         del valor enviado por Apps Script.
         */
         const incompletoHoy =
-          !alumno.entrada ||
-          !alumno.salida;
+          Boolean(
+            alumno.registroIncompleto
+          );
 
 
         html += `
@@ -2314,12 +2350,6 @@ function pintarTabla(
         const incompletoPeriodo =
           Boolean(
             alumno.registroIncompleto
-          ) ||
-          Number(
-            alumno.entradas || 0
-          ) !==
-          Number(
-            alumno.salidas || 0
           );
 
 
@@ -2619,8 +2649,12 @@ function abrirModalHistorial(
   }
 
   else if (
-    resultado.estadoActual ===
-    'CON REGISTROS'
+    (
+      resultado.estadoActual ===
+      'CON REGISTROS' ||
+      resultado.estadoActual ===
+      'DÍA INHÁBIL'
+    )
   ) {
 
     estadoDiv.style.background =
