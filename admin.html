@@ -1020,7 +1020,9 @@ tbody tr:hover {
 
       <!-- RESUMEN POR JORNADA -->
 
-      <div class="card">
+      <div
+        id="resumenJornadasCard"
+        class="card">
 
         <div class="listaTitulo">
           RESUMEN DE REGISTROS DEL PERIODO
@@ -2084,64 +2086,85 @@ function pintarPanel(
   }
 
 
+  const tarjeta5 =
+    document
+      .getElementById(
+        'card5Numero'
+      )
+      .closest(
+        '.tarjeta'
+      );
+
+
+  const resumenJornadasCard =
+    document
+      .getElementById(
+        'resumenJornadasCard'
+      );
+
+
+  /*
+   * CONSULTAS DE UN SOLO DÍA
+   *
+   * Incluye HOY y cualquier rango donde
+   * FECHA INICIAL = FECHA FINAL.
+   *
+   * Las tarjetas principales son exactamente:
+   * 1. Entrada y salida
+   * 2. Solo entrada
+   * 3. Solo salida
+   * 4. Sin entrada ni salida
+   *
+   * El bloque RESUMEN DE REGISTROS DEL PERIODO
+   * se oculta porque sería información duplicada.
+   */
   if (
-    periodoEsHoy
+    periodoEsUnDia
   ) {
 
     configurarTarjeta(
       1,
-      resumen.totalAlumnos,
-      'ALUMNOS'
+      resumen.jornadasCompletas,
+      'ENTRADA Y SALIDA'
     );
 
 
     configurarTarjeta(
       2,
-      resumen.entradas,
-      'ENTRADAS HOY'
+      resumen.jornadasSoloEntrada,
+      'SOLO ENTRADA'
     );
 
 
     configurarTarjeta(
       3,
-      resumen.salidas,
-      'SALIDAS HOY'
+      resumen.jornadasSoloSalida,
+      'SOLO SALIDA'
     );
 
 
     configurarTarjeta(
       4,
-      resumen.dentro,
-      'DENTRO DE LA ESCUELA'
+      resumen.jornadasSinRegistro,
+      'SIN ENTRADA NI SALIDA'
     );
 
 
-    if (
-      periodo.hoyEsHabil === false
-    ) {
+    tarjeta5.style.display =
+      'none';
 
-      configurarTarjeta(
-        5,
-        '—',
-        'DÍA INHÁBIL'
-      );
 
-    }
-
-    else {
-
-      configurarTarjeta(
-        5,
-        resumen.sinRegistro,
-        'SIN ENTRADA NI SALIDA'
-      );
-
-    }
+    resumenJornadasCard.style.display =
+      'none';
 
   }
 
   else {
 
+    /*
+     * SEMANA ACTUAL, MES ACTUAL y rangos
+     * personalizados de más de un día.
+     */
     configurarTarjeta(
       1,
       resumen.alumnosConRegistro,
@@ -2175,6 +2198,14 @@ function pintarPanel(
       resumen.alumnosSinEntradaNiSalida,
       'ALUMNOS SIN ENTRADA NI SALIDA'
     );
+
+
+    tarjeta5.style.display =
+      '';
+
+
+    resumenJornadasCard.style.display =
+      'block';
 
   }
 
