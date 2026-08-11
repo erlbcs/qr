@@ -175,6 +175,27 @@ body {
   font-weight: bold;
 }
 
+
+/* ACCESO AL LECTOR QR */
+.loginCard {
+  margin-bottom: 14px;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.06);
+}
+.loginTitulo { text-align:center; font-size:21px; font-weight:bold; margin-bottom:18px; }
+.loginCampo { margin-bottom:14px; }
+.loginCampo label { display:block; margin-bottom:6px; font-size:13px; font-weight:bold; }
+.loginCampo input { width:100%; padding:13px; border:2px solid #d1d5db; border-radius:9px; font-size:16px; outline:none; }
+.loginCampo input:focus { border-color:#2563eb; }
+.btnLogin { width:100%; padding:14px; border:0; border-radius:10px; background:#173b65; color:#fff; font-size:17px; font-weight:bold; }
+.loginError { display:none; margin-top:12px; padding:12px; border-radius:9px; background:#fee2e2; border:2px solid #ef4444; color:#991b1b; text-align:center; font-weight:bold; }
+.usuarioLector { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; padding:10px 12px; border-radius:9px; background:#eff6ff; color:#1e40af; font-size:13px; }
+.usuarioLector strong { display:block; }
+.btnCerrarQR { border:0; border-radius:8px; padding:8px 10px; background:#991b1b; color:#fff; font-weight:bold; }
+.oculto { display:none !important; }
+
 </style>
 
 </head>
@@ -196,6 +217,26 @@ body {
 </div>
 
 <div class="contenido">
+
+<div id="pantallaLoginQR" class="loginCard">
+  <div class="loginTitulo">ACCESO AL LECTOR QR</div>
+  <div class="loginCampo">
+    <label for="usuarioQR">USUARIO</label>
+    <input id="usuarioQR" type="text" autocomplete="username" placeholder="Ingrese su usuario">
+  </div>
+  <div class="loginCampo">
+    <label for="contrasenaQR">CONTRASEÑA</label>
+    <input id="contrasenaQR" type="password" autocomplete="current-password" placeholder="Ingrese su contraseña">
+  </div>
+  <button id="btnIngresarQR" class="btnLogin" onclick="iniciarSesionQR()">INGRESAR</button>
+  <div id="errorLoginQR" class="loginError"></div>
+</div>
+
+<div id="pantallaLectorQR" class="oculto">
+  <div class="usuarioLector">
+    <div><strong id="nombreUsuarioQR"></strong><span id="cuentaUsuarioQR"></span></div>
+    <button class="btnCerrarQR" onclick="cerrarSesionQR()">CERRAR SESIÓN</button>
+  </div>
 
 <div class="movimientos">
 
@@ -248,6 +289,8 @@ body {
 
 </div>
 
+</div><!-- /pantallaLectorQR -->
+
 </div>
 
 </div>
@@ -262,6 +305,11 @@ CONSERVA AQUÍ TU URL ACTUAL DE APPS SCRIPT
 
 const URL_API =
   'https://script.google.com/macros/s/AKfycbxeeSfxFcOKTFAbm8HMa8fGm_xpCAafd_HDfChpsBkiDoQbNMwG80ZjT0u1Ck1J4R1O/exec';
+
+
+const CLAVE_TOKEN_QR = 'asistencia_qr_token';
+let tokenQR = sessionStorage.getItem(CLAVE_TOKEN_QR) || '';
+let usuarioQRActual = null;
 
 
 let movimientoActual =
@@ -311,6 +359,115 @@ function obtenerAudioContext() {
   return audioContext;
 
 }
+
+
+function llamarApiQR(parametros, callbackResultado) {
+  const callback = 'respuestaLoginQR_' + Date.now() + '_' + Math.floor(Math.random()*100000);
+  const script = document.createElement('script');
+  let terminado = false;
+  const limpiar = () => {
+    try { delete window[callback]; } catch(e) {}
+    if (script.parentNode) script.parentNode.removeChild(script);
+  };
+  window[callback] = function(resultado) {
+    if (terminado) return;
+    terminado = true;
+    limpiar();
+    callbackResultado(resultado);
+  };
+  script.onerror = function() {
+    if (terminado) return;
+    terminado = true;
+    limpiar();
+    callbackResultado({ok:false,mensaje:'No fue posible comunicarse con el sistema.'});
+  };
+  parametros.callback = callback;
+  script.src = URL_API + '?' + new URLSearchParams(parametros).toString();
+  document.body.appendChild(script);
+}
+
+async function sha256QR(texto) {
+  const datos = new TextEncoder().encode(String(texto || ''));
+  const hash = await crypto.subtle.digest('SHA-256', datos);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function iniciarSesionQR() {
+  const usuario = String(document.getElementById('usuarioQR').value || '').trim().toUpperCase();
+  const contrasena = String(document.getElementById('contrasenaQR').value || '');
+  const error = document.getElementById('errorLoginQR');
+  error.style.display = 'none';
+  if (!usuario || !contrasena) {
+    error.textContent = 'Ingresa usuario y contraseña.';
+    error.style.display = 'block';
+    return;
+  }
+  const btn = document.getElementById('btnIngresarQR');
+  btn.disabled = true;
+  try {
+    const passwordHash = await sha256QR(contrasena);
+    llamarApiQR({accion:'loginQR',usuario:usuario,passwordHash:passwordHash}, function(resultado) {
+      btn.disabled = false;
+      if (!resultado || !resultado.ok) {
+        error.textContent = resultado && resultado.mensaje ? resultado.mensaje : 'No fue posible iniciar sesión.';
+        error.style.display = 'block';
+        return;
+      }
+      tokenQR = resultado.token;
+      usuarioQRActual = resultado.usuario || {};
+      sessionStorage.setItem(CLAVE_TOKEN_QR, tokenQR);
+      document.getElementById('contrasenaQR').value = '';
+      mostrarLectorAutorizado();
+    });
+  } catch(e) {
+    btn.disabled = false;
+    error.textContent = 'No fue posible procesar la contraseña.';
+    error.style.display = 'block';
+  }
+}
+
+function mostrarLectorAutorizado() {
+  document.getElementById('pantallaLoginQR').classList.add('oculto');
+  document.getElementById('pantallaLectorQR').classList.remove('oculto');
+  document.getElementById('nombreUsuarioQR').textContent = usuarioQRActual && usuarioQRActual.nombre ? usuarioQRActual.nombre : 'USUARIO AUTORIZADO';
+  document.getElementById('cuentaUsuarioQR').textContent = usuarioQRActual && usuarioQRActual.usuario ? usuarioQRActual.usuario : '';
+}
+
+function mostrarLoginQR() {
+  document.getElementById('pantallaLectorQR').classList.add('oculto');
+  document.getElementById('pantallaLoginQR').classList.remove('oculto');
+}
+
+function validarSesionQRGuardada() {
+  if (!tokenQR) { mostrarLoginQR(); return; }
+  llamarApiQR({accion:'validarQR',token:tokenQR}, function(resultado) {
+    if (!resultado || !resultado.ok) { cerrarSesionQRLocal(); return; }
+    usuarioQRActual = resultado.usuario || {};
+    mostrarLectorAutorizado();
+  });
+}
+
+function cerrarSesionQR() {
+  const token = tokenQR;
+  cerrarSesionQRLocal();
+  if (token) llamarApiQR({accion:'logoutQR',token:token}, function(){});
+}
+
+function cerrarSesionQRLocal() {
+  tokenQR = '';
+  usuarioQRActual = null;
+  sessionStorage.removeItem(CLAVE_TOKEN_QR);
+  if (camaraActiva && lector) {
+    lector.stop().then(() => { camaraActiva=false; lector=null; }).catch(() => {});
+  }
+  mostrarLoginQR();
+}
+
+window.addEventListener('load', validarSesionQRGuardada);
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !document.getElementById('pantallaLoginQR').classList.contains('oculto')) iniciarSesionQR();
+});
 
 
 function seleccionarMovimiento(
@@ -592,6 +749,9 @@ function enviarRegistro(
       accion:
         'registrar',
 
+      token:
+        tokenQR,
+
       curp:
         curp,
 
@@ -632,6 +792,16 @@ function procesarResultado(
 
     return;
 
+  }
+
+
+  if (
+    resultado.tipo === 'SESION'
+  ) {
+    cerrarSesionQRLocal();
+    mostrarError('Tu sesión ha expirado. Inicia sesión nuevamente.');
+    sonidoError();
+    return;
   }
 
 
