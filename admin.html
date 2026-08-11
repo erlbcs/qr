@@ -2356,6 +2356,74 @@ function pintarListas(
 ) {
 
   /*
+   * Orden de visualización:
+   * 1. TURNO: MATUTINO, VESPERTINO
+   * 2. GRADO: 1, 2, 3
+   * 3. GRUPO: A, B, C, D...
+   * 4. ALUMNO: orden alfabético
+   */
+  const ordenarAlumnos =
+    function(lista) {
+
+      const ordenTurno = {
+        MATUTINO: 1,
+        VESPERTINO: 2
+      };
+
+      return [...lista].sort(
+        function(a, b) {
+
+          const turnoA =
+            ordenTurno[String(a.turno || '').toUpperCase()] || 99;
+
+          const turnoB =
+            ordenTurno[String(b.turno || '').toUpperCase()] || 99;
+
+          if (turnoA !== turnoB) {
+            return turnoA - turnoB;
+          }
+
+          const gradoA =
+            Number(a.grado) || 99;
+
+          const gradoB =
+            Number(b.grado) || 99;
+
+          if (gradoA !== gradoB) {
+            return gradoA - gradoB;
+          }
+
+          const grupoA =
+            String(a.grupo || '').trim().toUpperCase();
+
+          const grupoB =
+            String(b.grupo || '').trim().toUpperCase();
+
+          const comparacionGrupo =
+            grupoA.localeCompare(
+              grupoB,
+              'es',
+              { sensitivity: 'base', numeric: true }
+            );
+
+          if (comparacionGrupo !== 0) {
+            return comparacionGrupo;
+          }
+
+          return String(a.nombre || '')
+            .localeCompare(
+              String(b.nombre || ''),
+              'es',
+              { sensitivity: 'base' }
+            );
+
+        }
+      );
+
+    };
+
+
+  /*
    * Si el periodo no contiene días hábiles,
    * ninguna de las dos listas aplica.
    */
@@ -2369,22 +2437,26 @@ function pintarListas(
 
   const completos =
     hayDiasHabiles
-      ? alumnos.filter(
-          alumno =>
-            Boolean(
-              alumno.cumpleTodosDiasHabiles
-            )
+      ? ordenarAlumnos(
+          alumnos.filter(
+            alumno =>
+              Boolean(
+                alumno.cumpleTodosDiasHabiles
+              )
+          )
         )
       : [];
 
 
   const incidencias =
     hayDiasHabiles
-      ? alumnos.filter(
-          alumno =>
-            Boolean(
-              alumno.tieneIncidenciasPeriodo
-            )
+      ? ordenarAlumnos(
+          alumnos.filter(
+            alumno =>
+              Boolean(
+                alumno.tieneIncidenciasPeriodo
+              )
+          )
         )
       : [];
 
