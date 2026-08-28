@@ -367,28 +367,66 @@ function obtenerAudioContext() {
 
 
 function llamarApiQR(parametros, callbackResultado) {
-  const callback = 'respuestaLoginQR_' + Date.now() + '_' + Math.floor(Math.random()*100000);
-  const script = document.createElement('script');
+  const requestId =
+    'qr_' + Date.now() + '_' +
+    Math.random().toString(36).slice(2, 12);
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.setAttribute('aria-hidden', 'true');
+
   let terminado = false;
-  const limpiar = () => {
-    try { delete window[callback]; } catch(e) {}
-    if (script.parentNode) script.parentNode.removeChild(script);
-  };
-  window[callback] = function(resultado) {
+
+  function limpiar() {
+    window.removeEventListener('message', recibirRespuesta);
+    if (iframe.parentNode) {
+      iframe.parentNode.removeChild(iframe);
+    }
+  }
+
+  function finalizar(resultado) {
     if (terminado) return;
     terminado = true;
+    clearTimeout(temporizador);
     limpiar();
     callbackResultado(resultado);
-  };
-  script.onerror = function() {
-    if (terminado) return;
-    terminado = true;
-    limpiar();
-    callbackResultado({ok:false,mensaje:'No fue posible comunicarse con el sistema.'});
-  };
-  parametros.callback = callback;
-  script.src = URL_API + '?' + new URLSearchParams(parametros).toString();
-  document.body.appendChild(script);
+  }
+
+  function recibirRespuesta(evento) {
+    if (evento.source !== iframe.contentWindow) return;
+
+    const datos = evento.data;
+
+    if (
+      !datos ||
+      datos.tipo !== 'ASISTENCIA_API' ||
+      datos.requestId !== requestId
+    ) {
+      return;
+    }
+
+    finalizar(datos.resultado);
+  }
+
+  window.addEventListener('message', recibirRespuesta);
+
+  const temporizador = setTimeout(function() {
+    finalizar({
+      ok: false,
+      mensaje: 'No fue posible comunicarse con el sistema.'
+    });
+  }, 15000);
+
+  const parametrosEnvio = Object.assign({}, parametros, {
+    transporte: 'iframe',
+    requestId: requestId
+  });
+
+  iframe.src =
+    URL_API + '?' +
+    new URLSearchParams(parametrosEnvio).toString();
+
+  document.body.appendChild(iframe);
 }
 
 async function sha256QR(texto) {
@@ -662,126 +700,32 @@ function enviarRegistro(
   movimiento
 ) {
 
-  const callback =
-    'respuestaQR_' +
-    Date.now();
-
-
-  const script =
-    document.createElement(
-      'script'
-    );
-
-
-  const limpiar =
-    () => {
-
-      try {
-        delete window[callback];
-      }
-      catch (e) {}
-
-
-      if (
-        script.parentNode
-      ) {
-
-        script.parentNode
-          .removeChild(
-            script
-          );
-
-      }
-
-    };
-
-
-  window[callback] =
+  llamarApiQR(
+    {
+      accion: 'registrar',
+      token: tokenQR,
+      curp: curp,
+      movimiento: movimiento
+    },
     function(resultado) {
 
-      limpiar();
-
-      procesando =
-        false;
-
+      procesando = false;
 
       document
-        .getElementById(
-          'procesando'
-        )
-        .style
-        .display =
-        'none';
+        .getElementById('procesando')
+        .style.display = 'none';
 
+      if (!resultado) {
+        mostrarError('No se recibió respuesta.');
+        sonidoError();
+        return;
+      }
 
-      procesarResultado(
-        resultado
-      );
-
-    };
-
-
-  script.onerror =
-    function() {
-
-      limpiar();
-
-      procesando =
-        false;
-
-
-      document
-        .getElementById(
-          'procesando'
-        )
-        .style
-        .display =
-        'none';
-
-
-      mostrarError(
-        'No fue posible comunicarse con Google Sheets.'
-      );
-
-      sonidoError();
-
-    };
-
-
-  const parametros =
-    new URLSearchParams({
-
-      accion:
-        'registrar',
-
-      token:
-        tokenQR,
-
-      curp:
-        curp,
-
-      movimiento:
-        movimiento,
-
-      callback:
-        callback
-
-    });
-
-
-  script.src =
-    URL_API +
-    '?' +
-    parametros.toString();
-
-
-  document.body
-    .appendChild(
-      script
-    );
+      procesarResultado(resultado);
+    }
+  );
 
 }
-
 
 function procesarResultado(
   resultado
